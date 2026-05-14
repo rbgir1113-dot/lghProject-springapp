@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.springapp.mapper.CommentMapper">
+    <select id="selectAllByPostId" parameterType="Long" resultType="CommentDTO">
+        SELECT ID, COMMENT_CONTENT, COMMENT_CREATE_AT, COMMENT_LIKE_COUNT, COMMENT_REPLY_COUNT, COMMENT_ID,
+               USER_NICKNAME, USER_PROFILE,  USER_ID,
+               POST_ID
+        FROM VW_COMMENT
+        WHERE POST_ID = #{postId}
+    </select>
+
+</mapper>
