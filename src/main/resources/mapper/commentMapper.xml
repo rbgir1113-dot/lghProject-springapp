@@ -7,7 +7,7 @@
                POST_ID
         FROM VW_COMMENT
         WHERE POST_ID = #{postId}
-        ORDER BY ID DESC
+        ORDER BY COALESCE(COMMENT_ID, ID) DESC, COMMENT_ID NULLS FIRST, ID DESC
     </select>
 
     <insert id="insert" parameterType="CommentVO">
@@ -17,6 +17,12 @@
         INSERT INTO TBL_COMMENT (ID, COMMENT_CONTENT, POST_ID, USER_ID, COMMENT_ID)
         VALUES (#{id}, #{commentContent}, #{postId}, #{userId}, #{commentId})
     </insert>
+
+    <select id="existByIdAndPostId" parameterType="CommentVO" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_COMMENT
+        WHERE ID = #{id} AND POST_ID = #{postId} AND COMMENT_IS_DELETED = 0 AND COMMENT_ID IS NULL
+    </select>
 
     <select id="existByIdAndUserId" parameterType="CommentVO" resultType="int">
         SELECT COUNT(*)
@@ -41,5 +47,11 @@
         SET COMMENT_IS_DELETED = 1
         WHERE COMMENT_ID = #{commentId}
     </update>
+
+    <select id="isParentComment" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_COMMENT
+        WHERE ID = #{commentId} AND COMMENT_ID IS NULL AND COMMENT_IS_DELETED = 0
+    </select>
 
 </mapper>

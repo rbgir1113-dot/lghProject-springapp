@@ -150,24 +150,4 @@ public class CommentApi {
                 .body(ApiResponseDTO.of(true, "댓글 삭제 성공"));
     }
 
-    @DeleteMapping("/replies/{replyId}")
-    @Operation(description = "대댓글 소프트 삭제")
-    @ApiResponse(responseCode = "204", description = "대댓글 삭제 성공")
-    @ApiResponse(responseCode = "400", description = "해당 대댓글 삭제 권한 없습니다.")
-    @Parameter(
-            name = "replyId",
-            description = "대댓글 아이디",
-            example = "1",
-            required = true,
-            in = ParameterIn.PATH,
-            schema = @Schema(type = "number")
-    )
-    public ResponseEntity<ApiResponseDTO> deletePostReply(
-            @PathVariable Long replyId
-    ) {
-        commentService.deleteReply(replyId);
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .body(ApiResponseDTO.of(true, "대댓글 삭제 성공"));
-    }
 }

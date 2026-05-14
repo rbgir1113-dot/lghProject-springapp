@@ -41,8 +41,46 @@ public class CommentServiceTest {
         commentRequestDTO.setCommentContent("대댓글 테스트 입니다.");
 //        Long postId = 1L;
         Long postId = 4L;
+//        Long postId = 100L;
         Long commentId = 1L;
 
         commentService.writePostReply(postId, commentId, commentRequestDTO);
+    }
+
+//    댓글 수정 테스트
+    @Test
+    public void updateComment(){
+        CommentRequestDTO commentRequestDTO = new CommentRequestDTO();
+        commentRequestDTO.setCommentContent("댓글 수정 테스트 입니다.");
+
+//        case 1. 자신이 작성한 댓글을 정상적으로 수정하기 (정상 작동)
+//        Long commentId = 25L;
+//        commentService.updateComment(commentId, commentRequestDTO);
+
+//        case 1-1. 자신이 작성한 대댓글 수정
+        Long postId = 42L;
+        commentService.updateComment(postId, commentRequestDTO);
+
+//        case 2. 자신이 작성하지 아니한 댓글을 수정 (정상 작동)
+//        Long commentId = 1L;
+//        commentService.updateComment(commentId, commentRequestDTO);
+
+//        case 3. 존재하지 않는 댓글을 수정하려고 하기 (정상 작동)
+//        Long postId = 100L;
+//        commentService.updateComment(postId, commentRequestDTO);
+    }
+
+//    댓글 삭제 테스트
+    @Test
+    public void deleteCommentTest(){
+//        자신이 작성한 댓글 삭제 (대댓글 없는 댓글) (정상 작동)
+//        Long commentId = 5L;
+
+//        자신이 작성하지 아니한 일반 댓글 삭제 (정상 작동)
+//        Long commentId = 11L;
+
+//        자신이 작성한 댓글 중 대댓글 있는거 삭제 (정상 작동)
+        Long commentId = 1L;
+        commentService.deleteComment(commentId);
     }
 }

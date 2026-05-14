@@ -15,6 +15,4 @@ public interface CommentService {
     public void updateComment(Long commentId, CommentRequestDTO commentRequestDTO);
 
     public void deleteComment(Long commentId);
-
-    public void deleteReply(Long replyId);
 }

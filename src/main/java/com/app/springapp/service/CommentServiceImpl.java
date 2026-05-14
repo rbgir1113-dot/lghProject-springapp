@@ -6,6 +6,7 @@ import com.app.springapp.domain.vo.CommentVO;
 import com.app.springapp.exception.CommentException;
 import com.app.springapp.repository.CommentDAO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = {Exception.class})
 @RequiredArgsConstructor
+@Slf4j
 public class CommentServiceImpl implements CommentService {
     private final CommentDAO commentDAO;
     private final CommunityAuthService communityAuthService;
@@ -48,6 +50,13 @@ public class CommentServiceImpl implements CommentService {
     public void writePostReply(Long postId, Long commentId, CommentRequestDTO commentRequestDTO) {
         Long userId = communityAuthService.getUserId();
         communityAuthService.checkUserValidity(userId);
+
+        CommentVO parentCheck = new CommentVO();
+        parentCheck.setId(commentId);
+        parentCheck.setPostId(postId);
+        if (commentDAO.existByIdAndPostId(parentCheck) == 0) {
+            throw new CommentException(HttpStatus.BAD_REQUEST, "해당 게시글에 존재하지 않는 댓글입니다.");
+        }
 
         CommentVO commentVO = CommentVO.from(commentRequestDTO);
         commentVO.setPostId(postId);
@@ -86,23 +95,12 @@ public class CommentServiceImpl implements CommentService {
         commentVO.setUserId(userId);
 
         if (commentDAO.existByIdAndUserId(commentVO) == 0) {
+            log.info("해당 부분 예외: {}", commentVO.getId().toString());
             throw new CommentException(HttpStatus.BAD_REQUEST, "해당 댓글 삭제 권한 없습니다.");
         }
 
-        commentDAO.updateRepliesIsDeleted(commentId);
-        commentDAO.updateIsDeleted(commentVO);
-    }
-
-    @Override
-    public void deleteReply(Long replyId) {
-        Long userId = communityAuthService.getUserId();
-
-        CommentVO commentVO = new CommentVO();
-        commentVO.setId(replyId);
-        commentVO.setUserId(userId);
-
-        if (commentDAO.existByIdAndUserId(commentVO) == 0) {
-            throw new CommentException(HttpStatus.BAD_REQUEST, "해당 대댓글 삭제 권한 없습니다.");
+        if (commentDAO.isParentComment(commentId) > 0) {
+            commentDAO.updateRepliesIsDeleted(commentId);
         }
 
         commentDAO.updateIsDeleted(commentVO);

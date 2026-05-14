@@ -21,6 +21,10 @@ public class CommentDAO {
         commentMapper.insert(commentVO);
     }
 
+    public int existByIdAndPostId(CommentVO commentVO) {
+        return commentMapper.existByIdAndPostId(commentVO);
+    }
+
     public int existByIdAndUserId(CommentVO commentVO) {
         return commentMapper.existByIdAndUserId(commentVO);
     }
@@ -35,5 +39,9 @@ public class CommentDAO {
 
     public void updateRepliesIsDeleted(Long commentId) {
         commentMapper.updateRepliesIsDeleted(commentId);
+    }
+
+    public int isParentComment(Long commentId) {
+        return commentMapper.isParentComment(commentId);
     }
 }
