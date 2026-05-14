@@ -3,8 +3,10 @@ package com.app.springapp.service;
 import com.app.springapp.domain.dto.request.CommentRequestDTO;
 import com.app.springapp.domain.dto.response.CommentResponseDTO;
 import com.app.springapp.domain.vo.CommentVO;
+import com.app.springapp.exception.CommentException;
 import com.app.springapp.repository.CommentDAO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,10 @@ public class CommentServiceImpl implements CommentService {
         commentVO.setPostId(postId);
         commentVO.setUserId(communityAuthService.getUserId());
 
-        commentDAO.save(commentVO);
+        try {
+            commentDAO.save(commentVO);
+        } catch (Exception e) {
+            throw new CommentException(HttpStatus.BAD_REQUEST, "댓글 작성 실패");
+        }
     }
 }

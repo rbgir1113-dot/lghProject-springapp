@@ -7,6 +7,7 @@
                POST_ID
         FROM VW_COMMENT
         WHERE POST_ID = #{postId}
+        ORDER BY ID DESC
     </select>
 
     <insert id="insert" parameterType="CommentVO">

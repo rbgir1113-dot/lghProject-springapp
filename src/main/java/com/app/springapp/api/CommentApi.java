@@ -1,5 +1,6 @@
 package com.app.springapp.api;
 
+import com.app.springapp.domain.dto.request.CommentRequestDTO;
 import com.app.springapp.domain.dto.response.ApiResponseDTO;
 import com.app.springapp.domain.dto.response.CommentResponseDTO;
 import com.app.springapp.service.CommentService;
@@ -11,10 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +23,7 @@ public class CommentApi {
 
     private final CommentService commentService;
 
+//    게시글 내 댓글 조회 api
     @GetMapping("/{postId}")
     @Operation(description = "게시글 내 댓글 조회")
     @ApiResponse(responseCode = "200", description = "게시글 내 댓글 조회 성공")
@@ -44,5 +43,28 @@ public class CommentApi {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "댓글 불러오기 성공", comments));
+    }
+
+//    게시글 내 댓글 작성
+    @PostMapping("/{postId}")
+    @Operation(description = "게시글 내 댓글 작성")
+    @ApiResponse(responseCode = "200", description = "게시글 내 댓글 작성 성공")
+    @ApiResponse(responseCode = "400", description = "게시글 내 댓글 작성 실패 (잘못된 요청)")
+    @Parameter(
+            name = "postId",
+            description = "게시글 아이디",
+            example = "1",
+            required = true,
+            in = ParameterIn.PATH,
+            schema = @Schema(type = "number")
+    )
+    public ResponseEntity<ApiResponseDTO> writePostComment(
+            @PathVariable Long postId,
+            @RequestBody CommentRequestDTO commentRequestDTO
+    ){
+        commentService.writePostComment(postId, commentRequestDTO);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDTO.of(true, "댓글 작성 성공"));
     }
 }
