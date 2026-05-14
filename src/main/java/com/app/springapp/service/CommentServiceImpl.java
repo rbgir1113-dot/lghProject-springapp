@@ -36,6 +36,9 @@ public class CommentServiceImpl implements CommentService {
         commentVO.setPostId(postId);
         commentVO.setUserId(communityAuthService.getUserId());
 
+//        유저 토큰 검증 시나리오
+        communityAuthService.checkUserValidity(postId);
+
         try {
             commentDAO.save(commentVO);
         } catch (Exception e) {

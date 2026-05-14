@@ -2,6 +2,8 @@ package com.app.springapp.service;
 
 import com.app.springapp.domain.dto.PostDTO;
 import com.app.springapp.domain.dto.request.PostRequestDTO;
+import com.app.springapp.domain.dto.response.PostSelectResponseDTO;
+
 import java.util.Map;
 
 public interface PostService {
@@ -9,7 +11,7 @@ public interface PostService {
     public Map<String, Object> getAllPosts(Map<String, Object> filters);
 
 //    특정 게시글 불러오기
-    public PostDTO getPost(PostDTO postDTO);
+    public PostSelectResponseDTO getPost(Long id);
 
 //    유저가 작성 한 게시글들 불러오기
     public Map<String, Object> getUserPosts(Long userId, Map<String, Object> filters);

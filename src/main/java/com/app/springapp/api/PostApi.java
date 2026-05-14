@@ -69,7 +69,7 @@ public class PostApi {
         postDTO.setId(id);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponseDTO.of(true, "포스트 로드 성공", postService.getPost(postDTO)));
+                .body(ApiResponseDTO.of(true, "포스트 로드 성공", postService.getPost(id)));
     }
 
 //    유저 프로필에서 게시글 가져오기

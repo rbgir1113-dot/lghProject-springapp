@@ -3,6 +3,7 @@ package com.app.springapp.service;
 import com.app.springapp.domain.dto.PostDTO;
 import com.app.springapp.domain.dto.request.PostRequestDTO;
 import com.app.springapp.domain.dto.response.PostResponseDTO;
+import com.app.springapp.domain.dto.response.PostSelectResponseDTO;
 import com.app.springapp.domain.vo.PostVO;
 import com.app.springapp.exception.PostException;
 import com.app.springapp.repository.PostDAO;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = {Exception.class, PostException.class})
 public class PostServiceImpl implements PostService {
     private final PostDAO postDAO;
+    private final CommunityAuthService communityAuthService;
 
     //    로그인 되기 전 까지 유저 아이디 관련하는거 담당하는 매서드 임시 정의
     public Long getUserId(){
@@ -67,11 +69,18 @@ public class PostServiceImpl implements PostService {
         return result;
     }
 
-//    게시글 조회
+//    특정 게시글 조회
     @Override
-    public PostDTO getPost(PostDTO postDTO) {
+    public PostSelectResponseDTO getPost(Long id) {
 //        조회수 증가
-        this.increasePostReadCount(postDTO.getId());
+        this.increasePostReadCount(id);
+
+//        현재 유저 정보 가져오기
+        Long userId = communityAuthService.getUserId();
+
+        PostDTO postDTO = new PostDTO();
+        postDTO.setId(id);
+        postDTO.setUserId(userId);
 
 //        게시글 불러오기 (없다면 예외)
         PostDTO post = postDAO.findById(postDTO).orElseThrow(() -> {
@@ -79,7 +88,7 @@ public class PostServiceImpl implements PostService {
         });
 
 //        게시글 반환
-        return post;
+        return PostSelectResponseDTO.from(post);
     }
 
 //    특정 유저의 프로필 에서 해당 유저가 작성 한 모든 게시글 보여주기

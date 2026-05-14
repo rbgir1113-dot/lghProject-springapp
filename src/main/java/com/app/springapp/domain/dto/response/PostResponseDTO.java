@@ -22,8 +22,8 @@ public class PostResponseDTO {
     private LocalDateTime postCreateAt;
     @Schema(description = "게시글 태그", example = "자유게시판")
     private String postTag;
-    @Schema(description = "유저 번호", example = "1")
-    private Long userId;
+//    @Schema(description = "유저 번호", example = "1")
+//    private Long userId;
     @Schema(description = "유저 닉네임", example = "수어러버박지민")
     private String userNickname;
     @Schema(description = "유저 프로필", example = "default.jpg")
@@ -41,7 +41,7 @@ public class PostResponseDTO {
         res.setPostReadCount(dto.getPostReadCount());
         res.setPostCreateAt(dto.getPostCreateAt());
         res.setPostTag(dto.getPostTag());
-        res.setUserId(dto.getUserId());
+//        res.setUserId(dto.getUserId());
         res.setUserNickname(dto.getUserNickname());
         res.setUserProfile(dto.getUserProfile());
         res.setLikeCount(dto.getLikeCount());
