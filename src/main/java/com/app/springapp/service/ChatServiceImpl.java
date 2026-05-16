@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -71,12 +73,29 @@ public class ChatServiceImpl implements ChatService {
 
 //    채팅방 관련
 
-//    모든 채팅방 불러와주기 (커뮤니티 페이지 들어왔을 때 보이는 모든 채팅방)
+//    모든 채팅방 불러와주기 (커뮤니티 페이지 들어왔을 때 보이는 모든 채팅방, 페이지네이션)
     @Override
-    public List<ChatRoomResponseDTO> loadAllChatRoom() {
-        List<ChatRoomDTO> chatRoomList = chatRoomDAO.findAll();
-        return chatRoomList.stream()
+    public Map<String, Object> loadAllChatRoom(int page) {
+        int size = 6;
+        int offset = (page - 1) * size;
+
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("size", size);
+        filters.put("offset", offset);
+
+        List<ChatRoomResponseDTO> rooms = chatRoomDAO.findAllWithPaging(filters).stream()
                 .map(ChatRoomResponseDTO::from)
                 .collect(Collectors.toList());
+
+        int roomCounts = chatRoomDAO.findCount();
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("rooms", rooms);
+        result.put("currentPage", page);
+        result.put("totalPages", (int) Math.ceil((double) roomCounts / size));
+        result.put("size", size);
+        result.put("roomCounts", roomCounts);
+
+        return result;
     }
 }

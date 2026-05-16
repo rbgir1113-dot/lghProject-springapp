@@ -13,6 +13,24 @@
         ORDER BY TBC.ID DESC
     </select>
 
+    <select id="selectAllWithPaging" parameterType="map" resultType="ChatRoomDTO">
+        SELECT TBC.ID, TBC.CHAT_ROOM_NAME, TBC.CHAT_ROOM_TYPE, TBC.CHAT_ROOM_CREATE_AT, TBC.CHAT_ROOM_PROFILE, TBC.USER_ID, TBC.CHAT_ROOM_IS_DELETED, TBC.CHAT_ROOM_DETAIL, TBC.CHAT_ROOM_LIMIT,
+               TBU.CHAT_ROOM_USERS
+        FROM TBL_CHAT_ROOM TBC
+        JOIN (
+            SELECT CHAT_ROOM_ID, COUNT(CHAT_ROOM_ID) AS CHAT_ROOM_USERS
+            FROM TBL_CHAT_USER
+            GROUP BY CHAT_ROOM_ID
+        ) TBU ON TBC.ID = TBU.CHAT_ROOM_ID
+        ORDER BY TBC.ID DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <select id="selectCount" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_CHAT_ROOM
+    </select>
+
     <insert id="insert" parameterType="ChatRoomVO">
         <selectKey keyProperty="id" resultType="Long" order="BEFORE">
             SELECT SEQ_CHAT_ROOM.NEXTVAL FROM DUAL

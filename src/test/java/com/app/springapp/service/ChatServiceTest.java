@@ -1,11 +1,15 @@
 package com.app.springapp.service;
 
 import com.app.springapp.domain.dto.request.ChatRequestDTO;
+import com.app.springapp.domain.dto.response.ChatRoomResponseDTO;
 import com.app.springapp.repository.ChatDAO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 @Slf4j
@@ -48,7 +52,9 @@ public class ChatServiceTest {
 //    테스트: 예
     @Test
     public void loadAllChatRoomTest() {
-        chatService.loadAllChatRoom()
+        Map<String, Object> result = chatService.loadAllChatRoom(1);
+        List<ChatRoomResponseDTO> rooms = (List<ChatRoomResponseDTO>) result.get("rooms");
+        rooms
                 .stream()
                 .forEach((chatRoom) -> log.info(chatRoom.toString()));
     }

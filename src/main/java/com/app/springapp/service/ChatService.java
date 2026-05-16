@@ -8,6 +8,7 @@ import com.app.springapp.domain.dto.response.ChatRoomResponseDTO;
 import com.app.springapp.domain.vo.ChatRoomVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ChatService {
 //    채팅방 내의 모든 메세지 불러오기
@@ -19,6 +20,6 @@ public interface ChatService {
 //    유저가 채팅방 남긴 이력 확인 (해당 방에 참여가 되어 있는지 , 메세지 기준으로)
     public boolean isUserInChatRoom(Long chatRoomId);
 
-//    모든 채팅방들을 불러와주기
-    public List<ChatRoomResponseDTO> loadAllChatRoom();
+//    모든 채팅방들을 불러와주기 (페이지네이션)
+    public Map<String, Object> loadAllChatRoom(int page);
 }
