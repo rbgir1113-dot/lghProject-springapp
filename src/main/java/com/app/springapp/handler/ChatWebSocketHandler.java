@@ -73,7 +73,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
         log.info("타 사용자 한테도 전달");
 
-        broadcast(chatRoomId, objectMapper.writeValueAsString(broadcastData));
+        broadcast(chatRoomId, session, broadcastData);
     }
 
     @Override
@@ -97,16 +97,16 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void broadcast(Long chatRoomId, String json) {
+    private void broadcast(Long chatRoomId, WebSocketSession senderSession, Map<String, Object> data) {
         Set<WebSocketSession> sessions = roomSessions.get(chatRoomId);
         if (sessions == null) return;
         for (WebSocketSession s : sessions) {
-            if (s.isOpen()) {
-                try {
-                    s.sendMessage(new TextMessage(json));
-                } catch (IOException e) {
-                    log.error("브로드캐스트 실패 - 세션: {}", s.getId(), e);
-                }
+            if (!s.isOpen()) continue;
+            try {
+                data.put("chatIsMe", s.getId().equals(senderSession.getId()));
+                s.sendMessage(new TextMessage(objectMapper.writeValueAsString(data)));
+            } catch (IOException e) {
+                log.error("브로드캐스트 실패 - 세션: {}", s.getId(), e);
             }
         }
     }
