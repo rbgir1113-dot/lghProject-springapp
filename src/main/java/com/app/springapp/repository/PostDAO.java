@@ -33,6 +33,11 @@ public class PostDAO {
         return postMapper.selectByUserId(filters);
     }
 
+//    유저가 좋아한 글 불러오는 코드
+    public List<PostDTO> findByUserPostLike(Long userId) {
+        return postMapper.selectByUserPostLike(userId);
+    }
+
 //    불러올 게시글의 전체 갯수
     public int findCount(String postTag) {
         return postMapper.selectCount(postTag);

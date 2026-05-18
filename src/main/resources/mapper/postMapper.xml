@@ -31,6 +31,17 @@
         WHERE VPS.ID = #{id} AND VPS.POST_IS_DELETED = 0
     </select>
 
+    <select id="selectByUserPostLike" parameterType="Long" resultType="PostDTO">
+        SELECT
+            VPS.ID, VPS.POST_TITLE, VPS.POST_CONTENT, VPS.POST_READ_COUNT, VPS.POST_CREATE_AT, VPS.POST_TAG, VPS.USER_ID,
+            VPS.USER_NICKNAME, VPS.USER_PROFILE,
+            NVL(VPS.LIKE_COUNT, 0) AS LIKE_COUNT,
+            NVL(VPS.COMMENT_COUNT, 0) AS COMMENT_COUNT
+        FROM TBL_POST_LIKE TPL
+        JOIN VW_POST_SUMMARY VPS ON VPS.ID = TPL.POST_ID
+        WHERE TPL.USER_ID = #{userId} AND VPS.POST_IS_DELETED = 0
+    </select>
+
     <select id="selectByUserId" parameterType="map" resultType="PostDTO">
         SELECT
             ID, POST_TITLE, POST_CONTENT ,POST_READ_COUNT, POST_CREATE_AT, POST_TAG, USER_ID,
