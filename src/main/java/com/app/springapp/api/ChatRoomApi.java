@@ -82,4 +82,7 @@ public class ChatRoomApi {
                 .status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "채팅 참여 유저 불러오기 성공", chatUsers));
     }
+
+//    현재 내가 채팅중인 채팅방 불러오기
+
 }
