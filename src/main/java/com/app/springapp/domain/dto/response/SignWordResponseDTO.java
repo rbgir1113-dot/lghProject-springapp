@@ -6,28 +6,30 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Data
-@Schema(description = "문화공공데이터 수어 응답 DTO")
+@Schema(description = "수어 검색 응답 DTO")
 public class SignWordResponseDTO {
 
+    @Schema(description = "수어 데이터 번호", example = "1")
+    private Long id;
+
     @Schema(description = "수어 단어명", example = "안녕하세요")
-    private String title;
-
-    @Schema(description = "썸네일 이미지 URL", example = "http://sldict.korean.go.kr/...")
-    private String thumbnailUrl;
-
-    @Schema(description = "수어 영상 URL", example = "http://sldict.korean.go.kr/...")
-    private String videoUrl;
+    private String signWordTitle;
 
     @Schema(description = "수어 설명", example = "오른손을...")
-    private String signDescription;
-
-    @Schema(description = "수어 이미지 URL 목록", example = "http://...,http://...")
-    private String signImages;
+    private String signWordDescription;
 
     @Schema(description = "카테고리", example = "식생활")
-    private String categoryType;
+    private String signWordCategory;
 
-    @Schema(description = "원본 상세 페이지 URL", example = "http://sldict.korean.go.kr/...")
-    private String sourceUrl;
+    @Schema(description = "썸네일 이미지 URL", example = "https://sldict.korean.go.kr/...")
+    private String signWordThumbnailUrl;
 
+    @Schema(description = "수어 영상 URL", example = "https://sldict.korean.go.kr/...")
+    private String signWordVideoUrl;
+
+    @Schema(description = "수어 이미지 URL 목록", example = "https://...,https://...")
+    private String signWordImages;
+
+    @Schema(description = "원본 상세 페이지 URL", example = "https://sldict.korean.go.kr/...")
+    private String signWordSourceUrl;
 }

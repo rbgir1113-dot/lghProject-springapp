@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.springapp.mapper.SignWordMapper">
+
+    <!-- 수어 전체 조회 -->
+    <select id="selectAll" resultType="SignWordResponseDTO">
+        SELECT ID, SIGN_WORD_TITLE, SIGN_WORD_DESCRIPTION, SIGN_WORD_CATEGORY,
+               SIGN_WORD_THUMBNAIL_URL, SIGN_WORD_VIDEO_URL, SIGN_WORD_IMAGES,
+               SIGN_WORD_SOURCE_URL, SIGN_WORD_CREATE_AT, SIGN_WORD_UPDATE_AT
+        FROM TBL_SIGN_WORD
+        ORDER BY ID DESC
+    </select>
+
+    <!-- 수어 검색 조회 -->
+    <select id="selectByKeyword" parameterType="String" resultType="SignWordResponseDTO">
+        SELECT ID, SIGN_WORD_TITLE, SIGN_WORD_DESCRIPTION, SIGN_WORD_CATEGORY,
+               SIGN_WORD_THUMBNAIL_URL, SIGN_WORD_VIDEO_URL, SIGN_WORD_IMAGES,
+               SIGN_WORD_SOURCE_URL, SIGN_WORD_CREATE_AT, SIGN_WORD_UPDATE_AT
+        FROM TBL_SIGN_WORD
+        WHERE SIGN_WORD_TITLE LIKE '%' || #{keyword} || '%'
+           OR SIGN_WORD_DESCRIPTION LIKE '%' || #{keyword} || '%'
+           OR SIGN_WORD_CATEGORY LIKE '%' || #{keyword} || '%'
+        ORDER BY ID DESC
+    </select>
+
+    <!-- 수어 상세 조회 -->
+    <select id="select" parameterType="Long" resultType="SignWordResponseDTO">
+        SELECT ID, SIGN_WORD_TITLE, SIGN_WORD_DESCRIPTION, SIGN_WORD_CATEGORY,
+               SIGN_WORD_THUMBNAIL_URL, SIGN_WORD_VIDEO_URL, SIGN_WORD_IMAGES,
+               SIGN_WORD_SOURCE_URL, SIGN_WORD_CREATE_AT, SIGN_WORD_UPDATE_AT
+        FROM TBL_SIGN_WORD
+        WHERE ID = #{id}
+    </select>
+
+    <!-- 수어 원본 URL 조회 -->
+    <select id="selectBySourceUrl" parameterType="String" resultType="SignWordResponseDTO">
+        SELECT ID, SIGN_WORD_TITLE, SIGN_WORD_DESCRIPTION, SIGN_WORD_CATEGORY,
+               SIGN_WORD_THUMBNAIL_URL, SIGN_WORD_VIDEO_URL, SIGN_WORD_IMAGES,
+               SIGN_WORD_SOURCE_URL, SIGN_WORD_CREATE_AT, SIGN_WORD_UPDATE_AT
+        FROM TBL_SIGN_WORD
+        WHERE SIGN_WORD_SOURCE_URL = #{signWordSourceUrl}
+    </select>
+
+    <!-- 수어 등록 -->
+    <insert id="insert" parameterType="SignWordVO">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT SEQ_SIGN_WORD.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TBL_SIGN_WORD (
+        ID, SIGN_WORD_TITLE, SIGN_WORD_DESCRIPTION, SIGN_WORD_CATEGORY,
+        SIGN_WORD_THUMBNAIL_URL, SIGN_WORD_VIDEO_URL, SIGN_WORD_IMAGES,
+        SIGN_WORD_SOURCE_URL
+        )
+        VALUES (
+        #{id}, #{signWordTitle}, #{signWordDescription}, #{signWordCategory},
+        #{signWordThumbnailUrl}, #{signWordVideoUrl}, #{signWordImages},
+        #{signWordSourceUrl}
+        )
+    </insert>
+
+    <!-- 수어 수정 -->
+    <update id="update" parameterType="SignWordVO">
+        UPDATE TBL_SIGN_WORD
+        SET SIGN_WORD_TITLE = #{signWordTitle},
+            SIGN_WORD_DESCRIPTION = #{signWordDescription},
+            SIGN_WORD_CATEGORY = #{signWordCategory},
+            SIGN_WORD_THUMBNAIL_URL = #{signWordThumbnailUrl},
+            SIGN_WORD_VIDEO_URL = #{signWordVideoUrl},
+            SIGN_WORD_IMAGES = #{signWordImages},
+            SIGN_WORD_SOURCE_URL = #{signWordSourceUrl},
+            SIGN_WORD_UPDATE_AT = SYSDATE
+        WHERE ID = #{id}
+    </update>
+
+    <!-- 수어 삭제 -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM TBL_SIGN_WORD
+        WHERE ID = #{id}
+    </delete>
+
+    <!-- 수어 전체 개수 조회 -->
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_SIGN_WORD
+    </select>
+
+    <!-- 수어 검색 개수 조회 -->
+    <select id="countByKeyword" parameterType="String" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_SIGN_WORD
+        WHERE SIGN_WORD_TITLE LIKE '%' || #{keyword} || '%'
+           OR SIGN_WORD_DESCRIPTION LIKE '%' || #{keyword} || '%'
+           OR SIGN_WORD_CATEGORY LIKE '%' || #{keyword} || '%'
+    </select>
+
+</mapper>

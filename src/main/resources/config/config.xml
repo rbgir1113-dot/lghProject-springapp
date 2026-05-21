@@ -158,6 +158,7 @@
         <typeAlias type="com.app.springapp.domain.dto.response.AiChatResponseDTO" alias="AiChatResponseDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.response.CertRenewResponseDTO" alias="CertRenewResponseDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.response.ApiResponseDTO" alias="ApiResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.SignWordResponseDTO" alias="SignWordResponseDTO"/>
 
         <!-- VO Alias -->
         <typeAlias type="com.app.springapp.domain.vo.UserVO" alias="UserVO"/>
@@ -209,5 +210,6 @@
         <typeAlias type="com.app.springapp.domain.vo.AiChatVO" alias="AiChatVO"/>
         <typeAlias type="com.app.springapp.domain.vo.CertRenewVO" alias="CertRenewVO"/>
         <typeAlias type="com.app.springapp.domain.vo.InquireVO" alias="InquireVO"/>
+        <typeAlias type="com.app.springapp.domain.vo.SignWordVO" alias="SignWordVO"/>
     </typeAliases>
 </configuration>
