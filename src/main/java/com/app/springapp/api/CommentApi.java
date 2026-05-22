@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,6 +44,37 @@ public class CommentApi {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "댓글 불러오기 성공", comments));
+    }
+
+//    유저가 작성한 댓글 목록 불러오기
+    @GetMapping("/users/{userId}")
+    @Operation(description = "유저가 작성 한 댓글 조회")
+    @ApiResponse(responseCode = "200", description = "유저 작성 댓글 조회 성공")
+    @ApiResponse(responseCode = "400", description = "유저 작성 댓글 조회 실패 (잘못된 요청)")
+    @Parameter(
+            name = "userId",
+            description = "유저 아이디",
+            example = "1",
+            required = true,
+            in = ParameterIn.PATH,
+            schema = @Schema(type = "number")
+    )
+    @Parameter(
+            name = "page",
+            description = "페이지 번호",
+            example = "1",
+            required = false,
+            in = ParameterIn.QUERY,
+            schema = @Schema(type = "number")
+    )
+    public ResponseEntity<ApiResponseDTO> getUserWrittenComments(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page
+    ){
+        Map<String, Object> result = commentService.getUserWrittenComments(userId, page);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDTO.of(true, "유저 작성 댓글 불러오기 성공", result));
     }
 
 //    게시글 내 댓글 작성

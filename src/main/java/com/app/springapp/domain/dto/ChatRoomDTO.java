@@ -27,4 +27,8 @@ public class ChatRoomDTO {
     private int ChatRoomLimit;
     @Schema(description = "채팅방 현재 채팅중인 인원", example = "50")
     private int ChatRoomUsers;
+    @Schema(description = "사용자가 채팅 참여 한 시각", example = "2024-01-01T00:00:00")
+    private String chatStartAt;
+    @Schema(description = "마지막으로 채팅 메세지 생성된 시각", example = "2024-01-01T00:00:00")
+    private String chatLastReadAt;
 }

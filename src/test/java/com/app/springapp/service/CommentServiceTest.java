@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
+import java.util.Map;
 
 @SpringBootTest
 @Slf4j
@@ -23,6 +24,16 @@ public class CommentServiceTest {
         comments.forEach(comment -> {
             log.info(comment.toString());
         });
+    }
+
+//    유저 작성 댓글 불러오기 테스트
+    @Test
+    public void getUserWrittenCommentsTest(){
+        Long userId = 1L;
+        Map<String, Object> result = commentService.getUserWrittenComments(userId, 1);
+        List<CommentResponseDTO> comments = (List<CommentResponseDTO>) result.get("comments");
+        comments.stream()
+                .forEach(comment -> {log.info(comment.toString());});
     }
 
 //    게시글에 댓글 달기 테스트

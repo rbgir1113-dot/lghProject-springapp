@@ -1,6 +1,10 @@
 package com.app.springapp.service;
 
+import com.app.springapp.domain.dto.ChatUserDTO;
 import com.app.springapp.domain.dto.request.ChatRoomRequestDTO;
+import com.app.springapp.domain.dto.response.ChatRoomResponseDTO;
+import com.app.springapp.domain.dto.response.ChatRoomUserResponseDTO;
+import com.app.springapp.domain.dto.response.ChatUserResponseDTO;
 import com.app.springapp.domain.vo.ChatUserVO;
 import com.app.springapp.domain.vo.ChatRoomVO;
 import com.app.springapp.exception.ChatException;
@@ -11,17 +15,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional(rollbackFor = {Exception.class})
 @RequiredArgsConstructor
 public class ChatRoomServiceImpl implements ChatRoomService {
     private final ChatUserDAO chatMemberDAO;
     private final ChatRoomDAO chatRoomDAO;
+    private final ChatUserDAO chatUserDAO;
     private final CommunityAuthService communityAuthService;
+    private final PostService postService;
 
     //    채팅방 방 생성
     @Override
-    public void createChatRoom(ChatRoomRequestDTO chatRoomRequestDTO) {
+    public Long createChatRoom(ChatRoomRequestDTO chatRoomRequestDTO) {
         Long userId = communityAuthService.getUserId();
         if(userId == null || userId == 0L){
             throw new ChatException(HttpStatus.UNAUTHORIZED, "채팅방 생성 권한이 없습니다.");
@@ -30,6 +41,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatRoomVO.setUserId(userId);
 
         chatRoomDAO.save(chatRoomVO);
+        Long id = chatRoomVO.getId();
+
+//        채팅방 참여 현황 추가 (방장이 자신이 만든 채팅방에 참여)
+        ChatUserVO chatUserVO = new ChatUserVO();
+        chatUserVO.setChatRoomId(id);
+        chatUserVO.setUserId(userId);
+
+        chatUserDAO.save(chatUserVO);
+
+//        트랜젝션 완료 후 만들어진 방 반환
+        return id;
     }
 
 //    유저가 채팅방에 참여
@@ -41,5 +63,55 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatMemberVO.setUserId(userId);
 
         chatMemberDAO.save(chatMemberVO);
+    }
+
+//    채팅방 정보 불러오기
+    @Override
+    public ChatRoomResponseDTO getChatRoomInfo(Long id) {
+        return chatRoomDAO.findById(id)
+                .map(ChatRoomResponseDTO::from)
+                .orElseThrow(() -> {
+                    throw new ChatException(HttpStatus.BAD_REQUEST, "해당 채팅방을 불러올 수 없습니다");
+                });
+    }
+
+    //    채팅방 내 채팅중인 인원 불러오기
+    @Override
+    public List<ChatUserResponseDTO> getChatRoomUsers(Long chatRoomId) {
+        List<ChatUserDTO> chatUsers = chatMemberDAO.findByChatRoomId(chatRoomId);
+        return chatUsers.stream()
+                .map(ChatUserResponseDTO::from)
+                .collect(Collectors.toList());
+    }
+
+//    사용자가 참여 중인 채팅방 페이지네이션 조회
+    @Override
+    public Map<String, Object> getJoinedChatRooms(int page) {
+        Map<String, Object> filters = new HashMap<>();
+        int size = 10;
+        int offset = (page - 1) * size;
+        Long userId = communityAuthService.getUserId();
+        communityAuthService.checkUserValidity(userId);
+        filters.put("offset", offset);
+        filters.put("size", size);
+        filters.put("userId", userId);
+
+//        결과
+        Map<String, Object> result = new HashMap<>();
+
+        List<ChatRoomUserResponseDTO> rooms = chatRoomDAO.findByUserId(filters)
+                .stream()
+                .map(ChatRoomUserResponseDTO::from)
+                .collect(Collectors.toList());
+        int roomCounts = chatUserDAO.countByUserId(userId);
+
+        result.put("rooms", rooms);
+        result.put("currentPage", page);
+        result.put("totalPages", postService.calcTotalPages(roomCounts, size));
+        result.put("size", size);
+        result.put("roomCounts", roomCounts);
+
+
+        return result;
     }
 }

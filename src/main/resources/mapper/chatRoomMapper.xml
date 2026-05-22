@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.app.springapp.mapper.ChatRoomMapper">
-    <select id="selectAll" resultType="ChatRoomDTO">
+    <select id="select" parameterType="Long" resultType="ChatRoomDTO">
         SELECT TBC.ID, TBC.CHAT_ROOM_NAME, TBC.CHAT_ROOM_TYPE, TBC.CHAT_ROOM_CREATE_AT, TBC.CHAT_ROOM_PROFILE, TBC.USER_ID, TBC.CHAT_ROOM_IS_DELETED, TBC.CHAT_ROOM_DETAIL, TBC.CHAT_ROOM_LIMIT,
                TBU.CHAT_ROOM_USERS
         FROM TBL_CHAT_ROOM TBC
@@ -10,6 +10,10 @@
             FROM TBL_CHAT_USER
             GROUP BY CHAT_ROOM_ID
         ) TBU ON TBC.ID = TBU.CHAT_ROOM_ID
+        WHERE TBC.CHAT_ROOM_IS_DELETED = 0
+        <if test="id != null">
+            AND TBC.ID = #{id}
+        </if>
         ORDER BY TBC.ID DESC
     </select>
 
@@ -29,6 +33,18 @@
     <select id="selectCount" resultType="int">
         SELECT COUNT(*)
         FROM TBL_CHAT_ROOM
+    </select>
+
+    <select id="selectByUserId" parameterType="map" resultType="ChatRoomDTO">
+        SELECT
+            VCR.ID, VCR.CHAT_ROOM_NAME, VCR.CHAT_ROOM_DETAIL, VCR.CHAT_ROOM_TYPE, VCR.CHAT_ROOM_CREATE_AT,
+            VCR.CHAT_ROOM_PROFILE, VCR.CHAT_ROOM_LIMIT, VCR.CHAT_ROOM_IS_DELETED, VCR.CHAT_ROOM_USERS,
+            TCU.CHAT_START_AT, TCU.CHAT_LAST_READ_AT, TCU.USER_ID
+        FROM VW_CHAT_ROOM VCR
+        JOIN TBL_CHAT_USER TCU ON VCR.ID = TCU.CHAT_ROOM_ID
+        WHERE TCU.USER_ID = #{userId}
+        ORDER BY TCU.CHAT_LAST_READ_AT DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
 
     <insert id="insert" parameterType="ChatRoomVO">

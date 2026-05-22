@@ -2,12 +2,14 @@ package com.app.springapp.service;
 
 import com.app.springapp.domain.dto.PostDTO;
 import com.app.springapp.domain.dto.request.PostRequestDTO;
+import com.app.springapp.domain.dto.response.PostResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // 커뮤니티 서비스 중 포스트 관련 서비스 테스트 위한 단테 파일
@@ -63,6 +65,21 @@ public class PostServiceTest {
             log.info("유저 게시글 Key: {}", k);
             log.info("유저 게시글 Value: {}", v);
         });
+    }
+
+//    유저가 좋아요 한 게시글 불러오기 서비스 테스트
+    @Test
+    public void getUserLikedPostsTest(){
+        Map<String,Object> req = new HashMap<>();
+        req.put("page",1);
+        Long UserId=1L;
+
+        Map<String,Object> result = postService.getUserLikedPosts(UserId,req);
+        List<PostResponseDTO> posts = (List<PostResponseDTO>) result.get("posts");
+        posts.stream()
+                .forEach(post->{
+                    log.info(post.toString());
+                });
     }
 
 //    게시글 작성 테스트

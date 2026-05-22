@@ -16,6 +16,9 @@ public interface PostService {
 //    유저가 작성 한 게시글들 불러오기
     public Map<String, Object> getUserPosts(Long userId, Map<String, Object> filters);
 
+//    유저가 좋아요 한 게시글 불러오기
+    public Map<String, Object> getUserLikedPosts(Long userId, Map<String, Object> filters);
+
 //    게시글 작성
     public void writePost(PostRequestDTO postRequestDTO);
 
@@ -36,4 +39,7 @@ public interface PostService {
 
 //    게시글 좋아요 삭제
     public void cancelPostLike(Long postId);
+
+//    페이지 계산
+    public int calcTotalPages(int totalCount, int size);
 }

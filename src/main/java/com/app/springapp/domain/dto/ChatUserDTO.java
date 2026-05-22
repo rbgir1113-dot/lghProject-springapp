@@ -19,4 +19,8 @@ public class ChatUserDTO {
     private Long userId;
     @Schema(description = "채팅방 번호", example = "1")
     private Long chatRoomId;
+    private String userNickname;
+    private String userProfile;
+    private String userEmail;
+    private Long userExp;
 }
