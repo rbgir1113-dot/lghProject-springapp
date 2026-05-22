@@ -27,4 +27,20 @@
         WHERE TEST_ID = #{testId}
     </select>
 
+    <!-- 내 접수 목록 조회 -->
+    <select id="selectByUserId" parameterType="Long" resultType="TestApplyDTO">
+        SELECT
+            A.ID,
+            A.TEST_APPLY_AT,
+            A.USER_ID,
+            A.TEST_ID,
+            T.TEST_TITLE,
+            T.TEST_DATE,
+            T.TEST_LOCATION
+        FROM TBL_TEST_APPLY A
+        JOIN TBL_TEST T ON A.TEST_ID = T.ID
+        WHERE A.USER_ID = #{userId}
+        ORDER BY A.TEST_APPLY_AT DESC
+    </select>
+
 </mapper>

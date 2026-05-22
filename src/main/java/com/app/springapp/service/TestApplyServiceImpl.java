@@ -2,6 +2,7 @@ package com.app.springapp.service;
 
 import com.app.springapp.domain.dto.TestApplyDTO;
 import com.app.springapp.domain.dto.TestDTO;
+import java.util.List;
 import com.app.springapp.domain.vo.TestApplyVO;
 import com.app.springapp.exception.UserException;
 import com.app.springapp.repository.TestApplyDAO;
@@ -20,6 +21,12 @@ public class TestApplyServiceImpl implements TestApplyService {
 
     private final TestApplyDAO testApplyDAO;
     private final TestDAO testDAO;
+
+    // 내 접수 목록 조회
+    @Override
+    public List<TestApplyDTO> getMyApplyList(Long userId) {
+        return testApplyDAO.findByUserId(userId);
+    }
 
     // 원서 접수 (정원 초과 시 예외 발생)
     @Override

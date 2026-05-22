@@ -39,6 +39,8 @@ public class UserDTO {
     private String socialUserProvider;
     @Schema(description = "유저 권한", example = "user")
     private String userRole;
+    @Schema(description = "자동 로그인 여부", example = "false")
+    private boolean autoLogin;
 
 
     //    소셜 로그인 제공자의 초기값
