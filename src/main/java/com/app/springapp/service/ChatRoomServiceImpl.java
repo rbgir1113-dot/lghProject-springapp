@@ -32,7 +32,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     //    채팅방 방 생성
     @Override
-    public void createChatRoom(ChatRoomRequestDTO chatRoomRequestDTO) {
+    public Long createChatRoom(ChatRoomRequestDTO chatRoomRequestDTO) {
         Long userId = communityAuthService.getUserId();
         if(userId == null || userId == 0L){
             throw new ChatException(HttpStatus.UNAUTHORIZED, "채팅방 생성 권한이 없습니다.");
@@ -41,6 +41,17 @@ public class ChatRoomServiceImpl implements ChatRoomService {
         chatRoomVO.setUserId(userId);
 
         chatRoomDAO.save(chatRoomVO);
+        Long id = chatRoomVO.getId();
+
+//        채팅방 참여 현황 추가 (방장이 자신이 만든 채팅방에 참여)
+        ChatUserVO chatUserVO = new ChatUserVO();
+        chatUserVO.setChatRoomId(id);
+        chatUserVO.setUserId(userId);
+
+        chatUserDAO.save(chatUserVO);
+
+//        트랜젝션 완료 후 만들어진 방 반환
+        return id;
     }
 
 //    유저가 채팅방에 참여

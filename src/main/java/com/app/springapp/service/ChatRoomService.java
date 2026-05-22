@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface ChatRoomService {
 //    순수하게 채팅방을 생성 하는것
-    public void createChatRoom(ChatRoomRequestDTO chatRoomRequestDTO);
+    public Long createChatRoom(ChatRoomRequestDTO chatRoomRequestDTO);
 
 //    유저의 채팅방 참여 목록 추가
     public void joinChatRoom(Long chatRoomId);

@@ -190,7 +190,7 @@ public class PostApi {
 
 //    게시글 좋아요 누르기
     @GetMapping("/like/{postId}")
-    @Operation(description = "게시글 좋아요 하기")
+    @Operation(summary = "게시글 좋아요", description = "게시글 좋아요 하기")
     @ApiResponse(responseCode = "200", description = "게시글 좋아요 성공")
     @ApiResponse(responseCode = "400", description = "해당 게시글에 좋아요 할 수 없습니다")
     @Parameter(
@@ -212,7 +212,7 @@ public class PostApi {
 
 //    게시글 좋아요 취소
     @DeleteMapping("/like/{postId}")
-    @Operation(description = "게시글 좋아요 취소 하기")
+    @Operation(summary = "게시글 좋아요 취소", description = "게시글 좋아요 취소 하기")
     @ApiResponse(responseCode = "204", description = "게시글 좋아요 취소 성공")
     @ApiResponse(responseCode = "400", description = "해당 게시글 좋아요 취소 불가능")
     @Parameter(

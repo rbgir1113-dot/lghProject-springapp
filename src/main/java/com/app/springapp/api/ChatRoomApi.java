@@ -35,10 +35,10 @@ public class ChatRoomApi {
     public ResponseEntity<ApiResponseDTO> createChatRoom(
             @RequestBody ChatRoomRequestDTO chatRoomRequestDTO
     ){
-        chatRoomService.createChatRoom(chatRoomRequestDTO);
+        Long id = chatRoomService.createChatRoom(chatRoomRequestDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponseDTO.of(true, "채팅방 생성 성공"));
+                .body(ApiResponseDTO.of(true, "채팅방 생성 성공", id));
     }
 
 //    채팅방 정보 불러오기
