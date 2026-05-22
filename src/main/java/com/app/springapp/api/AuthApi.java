@@ -33,25 +33,26 @@ public class AuthApi {
     public ResponseEntity<ApiResponseDTO> login(@RequestBody UserDTO userDTO) {
 
         JwtTokenDTO jwtTokenDTO = authService.login(userDTO);
+        boolean autoLogin = userDTO.isAutoLogin();
 
-        // Access Token 쿠키
+        // Access Token 쿠키 (자동로그인: 24시간 / 미체크: 세션 쿠키)
         ResponseCookie accessTokenCookie = ResponseCookie
                 .from("accessToken", jwtTokenDTO.getAccessToken())
                 .httpOnly(true)
                 .sameSite("Lax")
                 .path("/")
                 .secure(false)              // 배포 환경에서는 true
-                .maxAge(60 * 60 * 24)       // 24시간
+                .maxAge(autoLogin ? 60 * 60 * 24 : -1)
                 .build();
 
-        // Refresh Token 쿠키
+        // Refresh Token 쿠키 (자동로그인: 30일 / 미체크: 세션 쿠키)
         ResponseCookie refreshTokenCookie = ResponseCookie
                 .from("refreshToken", jwtTokenDTO.getRefreshToken())
                 .httpOnly(true)
                 .sameSite("Lax")
                 .path("/")
                 .secure(false)
-                .maxAge(60 * 60 * 24 * 30)  // 30일
+                .maxAge(autoLogin ? 60 * 60 * 24 * 30 : -1)
                 .build();
 
         return ResponseEntity.ok()

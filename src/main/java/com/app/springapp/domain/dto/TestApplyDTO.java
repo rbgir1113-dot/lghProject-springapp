@@ -17,4 +17,9 @@ public class TestApplyDTO {
     private Long userId;
     @Schema(description = "시험 번호", example = "1")
     private Long testId;
+
+    // 내 접수 목록 조회 시 JOIN으로 채워지는 시험 정보
+    private String testTitle;
+    private LocalDateTime testDate;
+    private String testLocation;
 }
