@@ -105,6 +105,38 @@ public class PostApi {
                 .body(ApiResponseDTO.of(true, "유저 게시글 로드 성공", result));
     }
 
+//    유저 프로필에서 유저가 좋아요 한 게시글 가져오기
+    @GetMapping("/user/{userId}/likes")
+    @Operation(description = "유저가 좋아요 한 게시글 목록 불러오기")
+    @ApiResponse(responseCode = "200", description = "유저 좋아요 게시글 목록 로드 성공")
+    @ApiResponse(responseCode = "400", description = "유저 좋아요 게시글 목록 로드 실패 (잘못된 요청)")
+    @Parameter(
+            name = "userId",
+            description = "유저 번호",
+            example = "1",
+            required = true,
+            in = ParameterIn.PATH,
+            schema = @Schema(type = "number")
+    )
+    @Parameter(
+            name = "page",
+            description = "게시글 페이지 번호",
+            example = "1",
+            required = false,
+            in = ParameterIn.QUERY,
+            schema = @Schema(type = "number")
+    )
+    public ResponseEntity<ApiResponseDTO> getPostLikedByUserId(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "1") int page
+    ){
+        Map<String, Object> req = new HashMap<>();
+        req.put("page", page);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDTO.of(true, "유저 좋아요 게시글 로드 성공", postService.getUserLikedPosts(userId, req)));
+    }
+
 //    게시글 작성
     @PostMapping("")
     @Operation(description = "게시글 작성하기")
@@ -158,7 +190,7 @@ public class PostApi {
 
 //    게시글 좋아요 누르기
     @GetMapping("/like/{postId}")
-    @Operation(description = "게시글 좋아요 하기")
+    @Operation(summary = "게시글 좋아요", description = "게시글 좋아요 하기")
     @ApiResponse(responseCode = "200", description = "게시글 좋아요 성공")
     @ApiResponse(responseCode = "400", description = "해당 게시글에 좋아요 할 수 없습니다")
     @Parameter(
@@ -180,7 +212,7 @@ public class PostApi {
 
 //    게시글 좋아요 취소
     @DeleteMapping("/like/{postId}")
-    @Operation(description = "게시글 좋아요 취소 하기")
+    @Operation(summary = "게시글 좋아요 취소", description = "게시글 좋아요 취소 하기")
     @ApiResponse(responseCode = "204", description = "게시글 좋아요 취소 성공")
     @ApiResponse(responseCode = "400", description = "해당 게시글 좋아요 취소 불가능")
     @Parameter(

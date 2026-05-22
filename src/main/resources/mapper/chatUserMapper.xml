@@ -10,4 +10,19 @@
         VALUES (#{id}, #{userId}, #{chatRoomId})
     </insert>
 
+    <select id="selectByChatRoomId" parameterType="Long" resultType="ChatUserDTO">
+        SELECT
+            TCU.ID, TCU.CHAT_ROOM_ID,
+            TBU.USER_NICKNAME, TBU.USER_PROFILE, TBU.USER_EMAIL, TBU.USER_EXP
+        FROM TBL_CHAT_USER TCU
+        JOIN TBL_USER TBU ON TCU.USER_ID = TBU.ID
+        WHERE TCU.CHAT_ROOM_ID = #{chatRoomId}
+    </select>
+
+    <select id="countByUserId" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_CHAT_USER
+        WHERE USER_ID = #{userId}
+    </select>
+
 </mapper>

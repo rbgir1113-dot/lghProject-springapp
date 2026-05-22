@@ -49,7 +49,7 @@ public class PostServiceImpl implements PostService {
         Map<String, Object> result = new HashMap<>();
         result.put("posts", posts);
         result.put("currentPage", page);
-        result.put("totalPages", calcTotalPages(postCounts, size));
+        result.put("totalPages", this.calcTotalPages(postCounts, size));
         result.put("size", size);
         result.put("postCounts", postCounts);
 
@@ -97,7 +97,35 @@ public class PostServiceImpl implements PostService {
         Map<String, Object> result = new HashMap<>();
         result.put("posts", posts);
         result.put("currentPage", page);
-        result.put("totalPages", calcTotalPages(postCounts, size));
+        result.put("totalPages", this.calcTotalPages(postCounts, size));
+        result.put("size", size);
+        result.put("postCounts", postCounts);
+
+        return result;
+    }
+
+//    유저가 좋아요 한 게시글 목록 불러오기
+    @Override
+    public Map<String, Object> getUserLikedPosts(Long userId, Map<String, Object> req) {
+        int page = (Integer) req.get("page");
+        int size = 4;
+        int offset = (page - 1) * size;
+
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("size", size);
+        filters.put("offset", offset);
+        filters.put("userId", userId);
+
+        List<PostResponseDTO> posts = postDAO.findByUserPostLike(filters).stream()
+                .map(PostResponseDTO::from)
+                .collect(Collectors.toList());
+
+        int postCounts = postDAO.countByUserPostLike(userId);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("posts", posts);
+        result.put("currentPage", page);
+        result.put("totalPages", this.calcTotalPages(postCounts, size));
         result.put("size", size);
         result.put("postCounts", postCounts);
 
@@ -145,7 +173,8 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    private int calcTotalPages(int totalCount, int size) {
+    @Override
+    public int calcTotalPages(int totalCount, int size) {
         return (int) Math.ceil((double) totalCount / size);
     }
 

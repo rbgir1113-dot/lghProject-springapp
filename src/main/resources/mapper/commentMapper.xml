@@ -10,6 +10,22 @@
         ORDER BY COALESCE(COMMENT_ID, ID) DESC, COMMENT_ID NULLS FIRST, ID DESC
     </select>
 
+    <select id="selectAllByUserId" parameterType="map" resultType="CommentDTO">
+        SELECT
+            ID, COMMENT_CONTENT, COMMENT_CREATE_AT, COMMENT_LIKE_COUNT, COMMENT_REPLY_COUNT,
+            USER_NICKNAME, USER_PROFILE, POST_ID, USER_ID
+        FROM VW_COMMENT
+        WHERE USER_ID = #{userId}
+        ORDER BY ID DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+
+    <select id="countByUserId" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM VW_COMMENT
+        WHERE USER_ID = #{userId}
+    </select>
+
     <insert id="insert" parameterType="CommentVO">
         <selectKey resultType="Long" keyProperty="id" order="BEFORE">
             SELECT SEQ_COMMENT.NEXTVAL FROM DUAL

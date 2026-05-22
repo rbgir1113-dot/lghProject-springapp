@@ -5,10 +5,16 @@ import com.app.springapp.domain.vo.CommentVO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface CommentMapper {
     public List<CommentDTO> selectAllByPostId(Long postId);
+
+//    유저가 작성한 댓글 불러오기
+    public List<CommentDTO> selectAllByUserId(Map<String, Object> filters);
+
+    public int countByUserId(Long userId);
 
     public void insert(CommentVO commentVO);
 

@@ -19,6 +19,12 @@ public interface PostMapper {
 //    유저 프로필 에서 유저가 작성한 게시글 목록
     public List<PostDTO> selectByUserId(Map<String, Object> filters);
 
+//    유저가 좋아요 한 게시글 목록
+    public List<PostDTO> selectByUserPostLike(Map<String, Object> filters);
+
+//    유저가 좋아요 한 게시글 전체 갯수
+    public int countByUserPostLike(Long userId);
+
 //    게시글 전체 갯수 (페이지네이션 용)
     public int selectCount(String postTag);
 

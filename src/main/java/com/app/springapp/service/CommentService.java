@@ -4,9 +4,13 @@ import com.app.springapp.domain.dto.request.CommentRequestDTO;
 import com.app.springapp.domain.dto.response.CommentResponseDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CommentService {
     public List<CommentResponseDTO> getAllPostComments(Long postId);
+
+//    유저가 남긴 댓글 조회 (페이지네이션)
+    public Map<String, Object> getUserWrittenComments(Long userId, int page);
 
     public void writePostComment(Long postId, CommentRequestDTO commentRequestDTO);
 
