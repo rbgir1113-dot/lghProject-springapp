@@ -4,7 +4,7 @@
 
     <select id="selectAll" parameterType="map" resultType="PostDTO">
         SELECT
-            ID, POST_TITLE, POST_CONTENT ,POST_READ_COUNT, POST_CREATE_AT, POST_TAG, USER_ID,
+            ID, POST_TITLE, POST_CONTENT ,POST_READ_COUNT, POST_CREATE_AT, POST_TAG, POST_PROFILE, USER_ID,
             USER_NICKNAME, USER_PROFILE,
             NVL(LIKE_COUNT, 0) AS LIKE_COUNT,
             NVL(COMMENT_COUNT, 0) AS COMMENT_COUNT
@@ -40,7 +40,19 @@
         FROM TBL_POST_LIKE TPL
         JOIN VW_POST_SUMMARY VPS ON VPS.ID = TPL.POST_ID
         WHERE TPL.USER_ID = #{userId} AND VPS.POST_IS_DELETED = 0
-        ORDER BY TPL.ID DESC
+        <if test="keyword != null and keyword != ''">
+            AND (POST_TITLE LIKE '%' || #{keyword} || '%'
+            OR POST_CONTENT LIKE '%' || #{keyword} || '%'
+            OR USER_NICKNAME LIKE '%' || #{keyword} || '%')
+        </if>
+        <choose>
+            <when test="order != null and order == 'popular'">
+                ORDER BY LIKE_COUNT DESC
+            </when>
+            <otherwise>
+                ORDER BY TPL.ID DESC
+            </otherwise>
+        </choose>
         OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
 
@@ -59,7 +71,19 @@
             NVL(COMMENT_COUNT, 0) AS COMMENT_COUNT
         FROM VW_POST_SUMMARY
         WHERE USER_ID = #{userId} AND POST_IS_DELETED = 0
-        ORDER BY ID DESC
+        <if test="keyword != null and keyword != ''">
+            AND (POST_TITLE LIKE '%' || #{keyword} || '%'
+              OR POST_CONTENT LIKE '%' || #{keyword} || '%'
+              OR USER_NICKNAME LIKE '%' || #{keyword} || '%')
+        </if>
+        <choose>
+            <when test="order != null and order == 'popular'">
+                ORDER BY LIKE_COUNT DESC
+            </when>
+            <otherwise>
+                ORDER BY ID DESC
+            </otherwise>
+        </choose>
         OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
 

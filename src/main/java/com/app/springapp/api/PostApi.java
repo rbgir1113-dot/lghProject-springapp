@@ -70,7 +70,7 @@ public class PostApi {
 
 //    유저 프로필에서 게시글 가져오기
     @GetMapping("/user/{userId}")
-    @Operation(description = "유저가 작성한 게시글 목록 불러오기")
+    @Operation(summary = "유저 작성 게시글 조회", description = "유저가 작성한 게시글 목록 불러오기")
     @ApiResponse(responseCode = "200", description = "유저 작성 게시글 목록 로드 성공")
     @ApiResponse(responseCode = "400", description = "유저 작성 게시글 목록 로드 실패 (잘못된 요청)")
     @Parameter(
@@ -89,15 +89,35 @@ public class PostApi {
             in = ParameterIn.QUERY,
             schema = @Schema(type = "number")
     )
+    @Parameter(
+            name = "order",
+            description = "게시글 정렬 기준",
+            example = "latest",
+            required = false,
+            in = ParameterIn.QUERY,
+            schema = @Schema(type = "string")
+    )
+    @Parameter(
+            name = "keyword",
+            description = "게시글 부분 검색 키워드",
+            example = "수어",
+            required = false,
+            in = ParameterIn.QUERY,
+            schema = @Schema(type = "string")
+    )
     public ResponseEntity<ApiResponseDTO> getPostByUserId(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "1") int page
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "latest") String order,
+            @RequestParam(defaultValue = "") String keyword
     ){
 //        유저 아이디는 추후 실제로 불러와질 수 있을 때 정하기
 //        Long userId = 1L;
         Map<String,Object> req = new HashMap<>();
         Map<String, Object> result = new HashMap<>();
         req.put("page", page);
+        req.put("order", order);
+        req.put("keyword", keyword);
 
         result = postService.getUserPosts(userId, req);
         return ResponseEntity
@@ -107,7 +127,7 @@ public class PostApi {
 
 //    유저 프로필에서 유저가 좋아요 한 게시글 가져오기
     @GetMapping("/user/{userId}/likes")
-    @Operation(description = "유저가 좋아요 한 게시글 목록 불러오기")
+    @Operation(summary = "유저가 좋아요 한 게시글 목록", description = "유저가 좋아요 한 게시글 목록 불러오기")
     @ApiResponse(responseCode = "200", description = "유저 좋아요 게시글 목록 로드 성공")
     @ApiResponse(responseCode = "400", description = "유저 좋아요 게시글 목록 로드 실패 (잘못된 요청)")
     @Parameter(
@@ -126,12 +146,32 @@ public class PostApi {
             in = ParameterIn.QUERY,
             schema = @Schema(type = "number")
     )
+    @Parameter(
+            name = "order",
+            description = "게시글 정렬 기준",
+            example = "latest",
+            required = false,
+            in = ParameterIn.QUERY,
+            schema = @Schema(type = "string")
+    )
+    @Parameter(
+            name = "keyword",
+            description = "게시글 부분 검색 키워드",
+            example = "수어",
+            required = false,
+            in = ParameterIn.QUERY,
+            schema = @Schema(type = "string")
+    )
     public ResponseEntity<ApiResponseDTO> getPostLikedByUserId(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "1") int page
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "latest") String order,
+            @RequestParam(defaultValue = "") String keyword
     ){
         Map<String, Object> req = new HashMap<>();
         req.put("page", page);
+        req.put("order", order);
+        req.put("keyword", keyword);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "유저 좋아요 게시글 로드 성공", postService.getUserLikedPosts(userId, req)));
@@ -139,7 +179,7 @@ public class PostApi {
 
 //    게시글 작성
     @PostMapping("")
-    @Operation(description = "게시글 작성하기")
+    @Operation(summary = "게시글 작성", description = "게시글 작성하기")
     @ApiResponse(responseCode = "201", description = "게시글 작성 성공")
     @ApiResponse(responseCode = "400", description = "게시글 작성 실패 (잘못된 요청)")
     public ResponseEntity<ApiResponseDTO> writePost(

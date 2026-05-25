@@ -60,7 +60,7 @@ public class ChatServiceTest {
 //    테스트: 예
     @Test
     public void loadAllChatRoomTest() {
-        Map<String, Object> result = chatService.loadAllChatRoom(1);
+        Map<String, Object> result = chatService.loadAllChatRoom(1, 3);
         List<ChatRoomResponseDTO> rooms = (List<ChatRoomResponseDTO>) result.get("rooms");
         rooms
                 .stream()

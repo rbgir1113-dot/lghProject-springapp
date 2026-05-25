@@ -70,8 +70,8 @@ public class ChatApi {
                 .body(ApiResponseDTO.of(true, "메세지 작성 성공"));
     }
 
-//    모든 채팅방 불러오기
-    @Operation(description = "모든 채팅방 불러오기")
+//    모든 채팅방 불러오기 (페이지네이션)
+    @Operation(summary = "모든 채팅방 불러오기", description = "모든 채팅방 불러오기")
     @ApiResponse(responseCode = "200", description = "채팅방 목록 불러오기 성공")
     @ApiResponse(responseCode = "400", description = "채팅방 목록 불러오기 실패 (잘못된 요청)")
     @Parameter(
@@ -84,9 +84,10 @@ public class ChatApi {
     )
     @GetMapping("/rooms")
     public ResponseEntity<ApiResponseDTO> getAllChatRooms(
-            @RequestParam(defaultValue = "1") int page
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int size
     ){
-        Map<String, Object> result = chatService.loadAllChatRoom(page);
+        Map<String, Object> result = chatService.loadAllChatRoom(page, size);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "채팅방 불러오기 성공", result));
