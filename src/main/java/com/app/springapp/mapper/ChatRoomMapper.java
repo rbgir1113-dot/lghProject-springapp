@@ -26,4 +26,8 @@ public interface ChatRoomMapper {
     public void insert(ChatRoomVO chatRoomVO);
 
 //    채팅방 수정
+    public void update(ChatRoomVO chatRoomVO);
+
+//    채팅방 소프트 삭제
+    public void updateChatRoomIsDeleteById(ChatRoomVO chatRoomVO);
 }

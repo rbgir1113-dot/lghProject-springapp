@@ -24,10 +24,12 @@ public interface ChatRoomService {
     public Map<String, Object> getJoinedChatRooms(int page);
 
 //    채팅방 정보 수정
+    public void updateChatRoomInfo(Long id, ChatRoomRequestDTO chatRoomRequestDTO);
 
 //    채팅방 방장 위임
 
 //    채팅방 삭제 (soft 삭제)
+    public void softDeleteChatRoom(Long chatRoomId);
 
 //    채팅방 검색
 }

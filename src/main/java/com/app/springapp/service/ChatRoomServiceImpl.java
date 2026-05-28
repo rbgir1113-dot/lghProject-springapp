@@ -114,4 +114,29 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
         return result;
     }
+
+//    채팅방 정보 수정
+    @Override
+    public void updateChatRoomInfo(Long id, ChatRoomRequestDTO chatRoomRequestDTO) {
+        Long userId = communityAuthService.getUserId();
+        communityAuthService.checkUserValidity(userId);
+
+        ChatRoomVO chatRoomVO = ChatRoomVO.from(chatRoomRequestDTO);
+        chatRoomVO.setId(id);
+        chatRoomVO.setUserId(userId);
+        chatRoomDAO.update(chatRoomVO);
+    }
+
+
+//    채팅방 삭제
+    @Override
+    public void softDeleteChatRoom(Long id) {
+        Long userId = communityAuthService.getUserId();
+        communityAuthService.checkUserValidity(userId);
+
+        ChatRoomVO chatRoomVO = new ChatRoomVO();
+        chatRoomVO.setId(id);
+        chatRoomVO.setUserId(userId);
+        chatRoomDAO.updateChatRoomIsDeleteById(chatRoomVO);
+    }
 }

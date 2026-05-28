@@ -45,4 +45,14 @@ public class ChatRoomDAO {
     public void save(ChatRoomVO chatRoomVO){
         chatRoomMapper.insert(chatRoomVO);
     }
+
+//    채팅방 수정
+    public void update(ChatRoomVO chatRoomVO){
+        chatRoomMapper.update(chatRoomVO);
+    }
+
+//    채팅방 소프트 삭제
+    public void updateChatRoomIsDeleteById(ChatRoomVO chatRoomVO){
+        chatRoomMapper.updateChatRoomIsDeleteById(chatRoomVO);
+    }
 }

@@ -68,4 +68,23 @@ public class ChatRoomServiceTest {
         Map<String, Object> result = chatRoomService.getJoinedChatRooms(1);
         log.info(result.toString());
     }
+
+//    채팅방 정보 수정 테스트
+    @Test
+    public void updateChatRoomInfoTest() {
+        ChatRoomRequestDTO chatRoomRequestDTO = new ChatRoomRequestDTO();
+        chatRoomRequestDTO.setChatRoomName("부산 수어");
+        chatRoomRequestDTO.setChatRoomDetail("모임입니다.");
+        chatRoomRequestDTO.setChatRoomLimit(65);
+        chatRoomRequestDTO.setChatRoomProfile("default.jpg");
+        Long chatRoomId = 5L;
+
+        chatRoomService.updateChatRoomInfo(chatRoomId, chatRoomRequestDTO);
+    }
+
+//    채팅방 소프트삭제 테스트
+    @Test
+    public void softDeleteChatRoomTest() {
+        chatRoomService.softDeleteChatRoom(5L);
+    }
 }
