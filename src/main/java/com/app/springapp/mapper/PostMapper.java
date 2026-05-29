@@ -26,7 +26,7 @@ public interface PostMapper {
     public int countByUserPostLike(Long userId);
 
 //    게시글 전체 갯수 (페이지네이션 용)
-    public int selectCount(String postTag);
+    public int selectCount(Map<String, Object> filters);
 
 //    유저 작성한 게시글 전체 갯수
     public int countByUserId(Long userId);

@@ -46,7 +46,7 @@ public class PostServiceImpl implements PostService {
                 .map(PostResponseDTO::from)
                 .collect(Collectors.toList());
 
-        int postCounts = postDAO.findCount(postTag);
+        int postCounts = postDAO.findCount(filters);
 
         Map<String, Object> result = new HashMap<>();
         result.put("posts", posts);

@@ -92,12 +92,17 @@
         OFFSET #{offset} ROWS FETCH NEXT #{size} ROWS ONLY
     </select>
 
-    <select id="selectCount" parameterType="String" resultType="int">
+    <select id="selectCount" parameterType="map" resultType="int">
         SELECT COUNT(*)
-        FROM TBL_POST
+        FROM VW_POST_SUMMARY
         WHERE POST_IS_DELETED = 0
         <if test="postTag != null and postTag != ''">
             AND POST_TAG = #{postTag}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            AND (POST_TITLE LIKE '%' || #{keyword} || '%'
+            OR POST_CONTENT LIKE '%' || #{keyword} || '%'
+            OR USER_NICKNAME LIKE '%' || #{keyword} || '%')
         </if>
     </select>
 

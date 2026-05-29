@@ -44,8 +44,8 @@ public class PostDAO {
     }
 
 //    불러올 게시글의 전체 갯수
-    public int findCount(String postTag) {
-        return postMapper.selectCount(postTag);
+    public int findCount(Map<String, Object> filters) {
+        return postMapper.selectCount(filters);
     }
 
 //    유저가 작성한 게시글 전체 갯수
