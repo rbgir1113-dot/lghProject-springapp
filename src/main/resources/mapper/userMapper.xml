@@ -7,8 +7,8 @@
         <selectKey keyProperty="id" resultType="Long" order="BEFORE">
             SELECT SEQ_USER.NEXTVAL FROM DUAL
         </selectKey>
-        INSERT INTO TBL_USER (ID, USER_EMAIL, USER_PASSWORD, USER_PROFILE, USER_NAME, USER_NICKNAME, USER_ROLE, USER_BIRTH)
-        VALUES (#{id}, #{userEmail}, #{userPassword}, #{userProfile}, #{userName}, #{userNickname}, 'USER', #{userBirth})
+        INSERT INTO TBL_USER (ID, USER_EMAIL, USER_PASSWORD, USER_PROFILE, USER_NAME, USER_NICKNAME, USER_ROLE, USER_BIRTH, USER_PHONE_NUM)
+        VALUES (#{id}, #{userEmail}, #{userPassword}, #{userProfile}, #{userName}, #{userNickname}, 'USER', #{userBirth}, #{userPhoneNum})
     </insert>
 
     <!-- 유저 조회 (ID) -->
