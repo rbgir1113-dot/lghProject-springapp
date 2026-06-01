@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.springapp.mapper.PaymentMapper">
+
+    <!-- 결제 저장 -->
+    <insert id="insert" parameterType="PaymentVO">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT SEQ_PAYMENT.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TBL_PAYMENT (
+            ID, PAYMENT_ORDER_ID, PAYMENT_KEY, PAYMENT_AMOUNT,
+            PAYMENT_STATUS, PAYMENT_METHOD, PAYMENT_AT,
+            PAYMENT_TYPE, REFERENCE_ID, USER_ID
+        ) VALUES (
+            #{id}, #{paymentOrderId}, #{paymentKey}, #{paymentAmount},
+            #{paymentStatus}, #{paymentMethod}, SYSDATE,
+            #{paymentType}, #{referenceId}, #{userId}
+        )
+    </insert>
+
+    <!-- 내 결제 목록 조회 -->
+    <select id="selectByUserId" parameterType="Long" resultType="PaymentDTO">
+        SELECT
+            ID              AS id,
+            PAYMENT_ORDER_ID AS paymentOrderId,
+            PAYMENT_KEY     AS paymentKey,
+            PAYMENT_AMOUNT  AS paymentAmount,
+            PAYMENT_STATUS  AS paymentStatus,
+            PAYMENT_METHOD  AS paymentMethod,
+            PAYMENT_AT      AS paymentAt,
+            PAYMENT_TYPE    AS paymentType,
+            REFERENCE_ID    AS referenceId,
+            USER_ID         AS userId
+        FROM TBL_PAYMENT
+        WHERE USER_ID = #{userId}
+        ORDER BY PAYMENT_AT DESC
+    </select>
+
+    <!-- 주문번호로 결제 조회 -->
+    <select id="selectByOrderId" parameterType="String" resultType="PaymentDTO">
+        SELECT
+            ID              AS id,
+            PAYMENT_ORDER_ID AS paymentOrderId,
+            PAYMENT_KEY     AS paymentKey,
+            PAYMENT_AMOUNT  AS paymentAmount,
+            PAYMENT_STATUS  AS paymentStatus,
+            PAYMENT_METHOD  AS paymentMethod,
+            PAYMENT_AT      AS paymentAt,
+            PAYMENT_TYPE    AS paymentType,
+            REFERENCE_ID    AS referenceId,
+            USER_ID         AS userId
+        FROM TBL_PAYMENT
+        WHERE PAYMENT_ORDER_ID = #{orderId}
+    </select>
+
+</mapper>

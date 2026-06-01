@@ -61,6 +61,32 @@ public class AuthApi {
                 .body(ApiResponseDTO.of(true, "로그인 성공"));
     }
 
+    // 로그아웃
+    @PostMapping("/logout")
+    @Operation(summary = "로그아웃", description = "accessToken, refreshToken 쿠키 삭제 + Redis 블랙리스트 등록")
+    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
+    public ResponseEntity<ApiResponseDTO> logout(
+            @CookieValue(name = "accessToken", required = false) String accessToken,
+            @CookieValue(name = "refreshToken", required = false) String refreshToken) {
+
+        if (accessToken != null && refreshToken != null) {
+            JwtTokenDTO jwtTokenDTO = new JwtTokenDTO();
+            jwtTokenDTO.setAccessToken(accessToken);
+            jwtTokenDTO.setRefreshToken(refreshToken);
+            authService.logout(jwtTokenDTO);
+        }
+
+        ResponseCookie deleteAccess = ResponseCookie.from("accessToken", "")
+                .httpOnly(true).sameSite("Lax").path("/").secure(false).maxAge(0).build();
+        ResponseCookie deleteRefresh = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true).sameSite("Lax").path("/").secure(false).maxAge(0).build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, deleteAccess.toString())
+                .header(HttpHeaders.SET_COOKIE, deleteRefresh.toString())
+                .body(ApiResponseDTO.of(true, "로그아웃 성공"));
+    }
+
     // Access Token 재발급
     @PutMapping("/token")
     @Operation(summary = "토큰 재발급", description = "Refresh Token으로 새로운 Access Token 발급")

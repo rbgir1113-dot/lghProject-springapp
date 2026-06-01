@@ -17,8 +17,10 @@ public class CertRenewServiceImpl implements CertRenewService {
     private final CertRenewDAO certRenewDAO;
 
     @Override
-    public void apply(CertRenewDTO certRenewDTO) {
-        certRenewDAO.save(CertRenewVO.from(certRenewDTO));
+    public Long apply(CertRenewDTO certRenewDTO) {
+        CertRenewVO vo = CertRenewVO.from(certRenewDTO);
+        certRenewDAO.save(vo);
+        return vo.getId();
     }
 
     @Override

@@ -59,6 +59,7 @@
         <typeAlias type="com.app.springapp.domain.dto.UserReportDTO" alias="UserReportDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.InquireDTO" alias="InquireDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.ReviewDTO" alias="ReviewDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.PaymentDTO" alias="PaymentDTO"/>
 
 
         <!-- Request DTO Alias -->
@@ -225,5 +226,6 @@
         <typeAlias type="com.app.springapp.domain.vo.InquireVO" alias="InquireVO"/>
         <typeAlias type="com.app.springapp.domain.vo.SignWordVO" alias="SignWordVO"/>
         <typeAlias type="com.app.springapp.domain.vo.UserWithdrawVO" alias="UserWithdrawVO"/>
+        <typeAlias type="com.app.springapp.domain.vo.PaymentVO" alias="PaymentVO"/>
     </typeAliases>
 </configuration>

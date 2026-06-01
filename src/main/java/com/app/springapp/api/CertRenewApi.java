@@ -34,8 +34,8 @@ public class CertRenewApi {
         Long userId = Long.parseLong((String) claims.get("id"));
         certRenewDTO.setUserId(userId);
 
-        certRenewService.apply(certRenewDTO);
-        return ResponseEntity.ok(ApiResponseDTO.of(true, "신청이 완료되었습니다."));
+        Long id = certRenewService.apply(certRenewDTO);
+        return ResponseEntity.ok(ApiResponseDTO.of(true, "신청이 완료되었습니다.", id));
     }
 
     @GetMapping

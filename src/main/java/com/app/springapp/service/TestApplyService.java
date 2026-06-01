@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface TestApplyService {
     // 원서 접수 (정원 초과 시 예외 발생)
-    void apply(TestApplyDTO testApplyDTO, List<MultipartFile> files);
+    Long apply(TestApplyDTO testApplyDTO, List<MultipartFile> files);
 
     // 접수 취소
     void cancel(Long id, Long userId);

@@ -48,7 +48,7 @@ public class TestApplyServiceImpl implements TestApplyService {
 
     // 원서 접수 (정원 초과 시 예외 발생)
     @Override
-    public void apply(TestApplyDTO testApplyDTO, List<MultipartFile> files) {
+    public Long apply(TestApplyDTO testApplyDTO, List<MultipartFile> files) {
         // 시험 정보 조회
         TestDTO test = testDAO.findById(testApplyDTO.getTestId())
                 .orElseThrow(() -> new UserException("존재하지 않는 시험입니다.", HttpStatus.NOT_FOUND));
@@ -74,5 +74,6 @@ public class TestApplyServiceImpl implements TestApplyService {
         // 원서 접수 등록
         TestApplyVO testApplyVO = TestApplyVO.from(testApplyDTO);
         testApplyDAO.save(testApplyVO);
+        return testApplyVO.getId();
     }
 }

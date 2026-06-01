@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -86,24 +85,5 @@ public class JwtTokenUtil {
         }
     }
 
-    // 토큰 유효성 검사
-    public Map<String, Object> validateToken(String token) {
-        Map<String, Object> result = new HashMap<>();
-        try {
-            Jwts.parser()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-
-            result.put("success", true);
-            result.put("message", "토큰 파싱 완료");
-            return result;
-
-        } catch (Exception e) {
-            result.put("success", false);
-            result.put("message", e.getMessage());
-            return result;
-        }
-    }
 
 }
