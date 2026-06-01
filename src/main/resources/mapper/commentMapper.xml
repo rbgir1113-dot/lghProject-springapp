@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.app.springapp.mapper.CommentMapper">
-    <select id="selectAllByPostId" parameterType="Long" resultType="CommentDTO">
-        SELECT ID, COMMENT_CONTENT, COMMENT_CREATE_AT, COMMENT_LIKE_COUNT, COMMENT_REPLY_COUNT, COMMENT_ID,
-               USER_NICKNAME, USER_PROFILE,  USER_ID,
-               POST_ID
-        FROM VW_COMMENT
-        WHERE POST_ID = #{postId}
-        ORDER BY COALESCE(COMMENT_ID, ID) DESC, COMMENT_ID NULLS FIRST, ID DESC
+    <select id="selectAllByPostId" parameterType="map" resultType="CommentDTO">
+        SELECT VC.ID, VC.COMMENT_CONTENT, VC.COMMENT_CREATE_AT, VC.COMMENT_LIKE_COUNT, VC.COMMENT_REPLY_COUNT,
+               VC.COMMENT_ID, VC.USER_NICKNAME, VC.USER_PROFILE, VC.USER_ID, VC.POST_ID,
+               <choose>
+                   <when test="userId != null">
+                       NVL2(TBC.COMMENT_ID, 1, 0) AS COMMENT_IS_LIKED,
+                       CASE WHEN VC.USER_ID = #{userId} THEN 1 ELSE 0 END AS COMMENT_IS_WRITED
+                   </when>
+                   <otherwise>
+                       0 AS COMMENT_IS_LIKED,
+                       0 AS COMMENT_IS_WRITED
+                   </otherwise>
+               </choose>
+        FROM VW_COMMENT VC
+        <if test="userId != null">
+        LEFT JOIN (
+            SELECT * FROM TBL_COMMENT_LIKE WHERE USER_ID = #{userId}
+        ) TBC ON VC.ID = TBC.COMMENT_ID
+        </if>
+        WHERE VC.POST_ID = #{postId}
+        ORDER BY COALESCE(VC.COMMENT_ID, VC.ID) DESC, VC.COMMENT_ID NULLS FIRST, VC.ID DESC
     </select>
 
     <select id="selectAllByUserId" parameterType="map" resultType="CommentDTO">

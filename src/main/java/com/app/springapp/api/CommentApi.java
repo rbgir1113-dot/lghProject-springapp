@@ -124,6 +124,7 @@ public class CommentApi {
                 .body(ApiResponseDTO.of(true, "댓글 작성 성공"));
     }
 
+//    게시글 내 댓글에 대댓글 작성
     @PostMapping("/{postId}/replies/{commentId}")
     @Operation(summary = "대댓글 작성", description = "게시글 내 대댓글 작성")
     @ApiResponse(responseCode = "200", description = "대댓글 작성 성공")
@@ -154,6 +155,7 @@ public class CommentApi {
                 .body(ApiResponseDTO.of(true, "대댓글 작성 성공"));
     }
 
+//    자신이 작성 한 댓글 수정
     @PutMapping("/{postId}/{commentId}")
     @Operation(summary = "댓글 수정", description = "게시글 내 댓글 수정")
     @ApiResponse(responseCode = "200", description = "댓글 수정 성공")
@@ -185,6 +187,7 @@ public class CommentApi {
                 .body(ApiResponseDTO.of(true, "댓글 수정 성공"));
     }
 
+//    자신이 작성 한 댓글 삭제
     @DeleteMapping("/{commentId}")
     @Operation(summary = "댓글 삭제", description = "댓글 삭제 (대댓글 포함 소프트 삭제)")
     @ApiResponse(responseCode = "204", description = "댓글 삭제 성공")
@@ -205,6 +208,7 @@ public class CommentApi {
                 .status(HttpStatus.NO_CONTENT)
                 .body(ApiResponseDTO.of(true, "댓글 삭제 성공"));
     }
+
 //    댓글 좋아요 하기
     @GetMapping("/likes/{commentId}")
     @Operation(summary = "댓글 좋아요", description = "댓글 좋아요 하는 서비스")

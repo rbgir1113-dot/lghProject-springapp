@@ -15,8 +15,8 @@ public class CommentDAO {
     private final CommentMapper commentMapper;
 
 //    게시글에 작성 된 댓글 조회
-    public List<CommentDTO> findAllByPostId(Long postId){
-        return commentMapper.selectAllByPostId(postId);
+    public List<CommentDTO> findAllByPostId(Map<String, Object> params){
+        return commentMapper.selectAllByPostId(params);
     }
 
 //    유저가 작성 한 댓글 조회 (페이지네이션)

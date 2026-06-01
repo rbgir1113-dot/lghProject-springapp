@@ -30,6 +30,10 @@ public class CommentResponseDTO {
     private Long userId;
     @Schema(description = "부모 댓글 번호 (대댓글인 경우)", example = "1")
     private Long commentId;
+    @Schema(description = "로그인 유저의 좋아요 여부", example = "false")
+    private Boolean commentIsLiked;
+    @Schema(description = "로그인 유저의 해당 댓글 작성 여부", example = "false")
+    private Boolean commentIsWrited;
 
     public static CommentResponseDTO from(CommentDTO dto) {
         CommentResponseDTO res = new CommentResponseDTO();
@@ -43,6 +47,8 @@ public class CommentResponseDTO {
         res.setPostId(dto.getPostId());
         res.setUserId(dto.getUserId());
         res.setCommentId(dto.getCommentId());
+        res.setCommentIsLiked(dto.getCommentIsLiked());
+        res.setCommentIsWrited(dto.getCommentIsWrited());
 
         return res;
     }

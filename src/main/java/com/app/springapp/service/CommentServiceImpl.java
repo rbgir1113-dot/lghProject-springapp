@@ -29,7 +29,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentResponseDTO> getAllPostComments(Long postId) {
-        return commentDAO.findAllByPostId(postId)
+        Long userId = communityAuthService.getUserId();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("postId", postId);
+        params.put("userId", userId);
+
+        return commentDAO.findAllByPostId(params)
                 .stream()
                 .map(CommentResponseDTO::from)
                 .collect(Collectors.toList());

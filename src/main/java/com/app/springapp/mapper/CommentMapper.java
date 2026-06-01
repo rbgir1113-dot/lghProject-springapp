@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Mapper
 public interface CommentMapper {
-    public List<CommentDTO> selectAllByPostId(Long postId);
+    public List<CommentDTO> selectAllByPostId(Map<String, Object> params);
 
 //    유저가 작성한 댓글 불러오기
     public List<CommentDTO> selectAllByUserId(Map<String, Object> filters);
