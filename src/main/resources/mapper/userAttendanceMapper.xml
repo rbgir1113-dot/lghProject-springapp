@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.springapp.mapper.UserAttendanceMapper">
+
+    <!-- 오늘 출석 여부 조회 -->
+    <select id="countTodayAttendance" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_USER_ATTENDANCE
+        WHERE USER_ID = #{userId}
+          AND USER_ATTENDANCE_DATE = TRUNC(SYSDATE)
+    </select>
+
+    <!-- 오늘 출석 등록 -->
+    <insert id="insertTodayAttendance" parameterType="UserAttendanceVO">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT SEQ_USER_ATTENDANCE.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TBL_USER_ATTENDANCE (ID, USER_ATTENDANCE_DATE, USER_ID)
+        VALUES (#{id}, TRUNC(SYSDATE), #{userId})
+    </insert>
+
+    <!-- 누적 출석일 조회 -->
+    <select id="countTotalAttendance" parameterType="Long" resultType="int">
+        SELECT COUNT(*)
+        FROM TBL_USER_ATTENDANCE
+        WHERE USER_ID = #{userId}
+    </select>
+
+    <!-- 현재 연속 출석일 조회: 오늘 또는 어제까지 이어진 출석만 인정 -->
+    <select id="selectConsecutiveDays" parameterType="Long" resultType="int">
+        WITH ATTENDANCE AS (
+            SELECT USER_ATTENDANCE_DATE,
+                    MAX(USER_ATTENDANCE_DATE) OVER () AS LAST_ATTENDANCE_DATE,
+                    ROW_NUMBER() OVER (
+                        ORDER BY USER_ATTENDANCE_DATE DESC
+                        ) AS RN
+            FROM TBL_USER_ATTENDANCE
+            WHERE USER_ID = #{userId}
+              AND USER_ATTENDANCE_DATE &lt;= TRUNC(SYSDATE)
+        )
+        SELECT COUNT(*)
+        FROM ATTENDANCE
+        WHERE LAST_ATTENDANCE_DATE &gt;= TRUNC(SYSDATE) - 1
+          AND USER_ATTENDANCE_DATE = LAST_ATTENDANCE_DATE - (RN - 1)
+    </select>
+
+    <!-- 기간별 출석 날짜 조회: 월별 달력과 주간 상태에서 공통 사용 -->
+    <select id="selectAttendanceDatesByPeriod" resultType="java.time.LocalDate">
+        SELECT USER_ATTENDANCE_DATE
+        FROM TBL_USER_ATTENDANCE
+        WHERE USER_ID = #{userId}
+          AND USER_ATTENDANCE_DATE &gt;= #{startDate}
+          AND USER_ATTENDANCE_DATE &lt; #{endDate}
+        ORDER BY USER_ATTENDANCE_DATE ASC
+    </select>
+
+</mapper>

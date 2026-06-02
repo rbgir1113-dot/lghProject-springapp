@@ -227,5 +227,7 @@
         <typeAlias type="com.app.springapp.domain.vo.SignWordVO" alias="SignWordVO"/>
         <typeAlias type="com.app.springapp.domain.vo.UserWithdrawVO" alias="UserWithdrawVO"/>
         <typeAlias type="com.app.springapp.domain.vo.PaymentVO" alias="PaymentVO"/>
+        <typeAlias type="com.app.springapp.domain.vo.RewardPolicyVO" alias="RewardPolicyVO"/>
+        <typeAlias type="com.app.springapp.domain.vo.UserRewardHistoryVO" alias="UserRewardHistoryVO"/>
     </typeAliases>
 </configuration>
