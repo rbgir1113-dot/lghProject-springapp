@@ -2,6 +2,7 @@ package com.app.springapp.handler;
 
 import com.app.springapp.domain.dto.JwtTokenDTO;
 import com.app.springapp.domain.dto.UserDTO;
+import com.app.springapp.domain.enums.SocialProvider;
 import com.app.springapp.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,17 +41,19 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             String socialUserProviderId = null;
             String userName = null;
 
-            if ("google".equals(socialUserProvider)) {
+            SocialProvider provider = SocialProvider.fromValue(socialUserProvider);
+
+            if (provider == SocialProvider.GOOGLE) {
                 userEmail = (String) attributes.get("email");
                 socialUserProviderId = (String) attributes.get("sub");
                 userName = (String) attributes.get("name");
-            } else if ("kakao".equals(socialUserProvider)) {
+            } else if (provider == SocialProvider.KAKAO) {
                 socialUserProviderId = String.valueOf(attributes.get("id"));
                 Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
                 Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
                 userEmail = (String) kakaoAccount.get("email");
                 userName = (String) profile.get("nickname");
-            } else if ("naver".equals(socialUserProvider)) {
+            } else if (provider == SocialProvider.NAVER) {
                 Map<String, Object> naverResponse = (Map<String, Object>) attributes.get("response");
                 socialUserProviderId = (String) naverResponse.get("id");
                 userEmail = (String) naverResponse.get("email");
@@ -61,7 +64,7 @@ public class Oauth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             userDTO.setUserEmail(userEmail);
             userDTO.setSocialUserProviderId(socialUserProviderId);
             userDTO.setUserName(userName);
-            userDTO.setSocialUserProvider(socialUserProvider);
+            userDTO.setSocialUserProvider(provider);
 
             if (authService.isSocialUserExists(userDTO)) {
                 // ✅ 기존 회원 → JWT 발급 후 메인으로 이동

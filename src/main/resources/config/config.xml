@@ -230,4 +230,8 @@
         <typeAlias type="com.app.springapp.domain.vo.RewardPolicyVO" alias="RewardPolicyVO"/>
         <typeAlias type="com.app.springapp.domain.vo.UserRewardHistoryVO" alias="UserRewardHistoryVO"/>
     </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.app.springapp.typehandler.SocialProviderTypeHandler"/>
+    </typeHandlers>
 </configuration>
