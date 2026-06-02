@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.springapp.mapper.RewardPolicyMapper">
+
+    <!-- 보상 번호로 정책 조회 -->
+    <select id="selectById" parameterType="Long" resultType="RewardPolicyVO">
+        SELECT ID, REWARD_TYPE, REWARD_CONDITION, REWARD_EXP, BADGE_ID
+        FROM TBL_REWARD_POLICY
+        WHERE ID = #{id}
+    </select>
+
+    <!-- 보상 조건으로 정책 조회 -->
+    <select id="selectByTypeAndCondition" resultType="RewardPolicyVO">
+        SELECT ID, REWARD_TYPE, REWARD_CONDITION, REWARD_EXP, BADGE_ID
+        FROM TBL_REWARD_POLICY
+        WHERE REWARD_TYPE = #{rewardType}
+          AND REWARD_CONDITION = #{rewardCondition}
+    </select>
+
+    <!-- 보상 종류별 정책 목록 조회 -->
+    <select id="selectByType" parameterType="String" resultType="RewardPolicyVO">
+        SELECT ID, REWARD_TYPE, REWARD_CONDITION, REWARD_EXP, BADGE_ID
+        FROM TBL_REWARD_POLICY
+        WHERE REWARD_TYPE = #{rewardType}
+        ORDER BY ID ASC
+    </select>
+
+</mapper>
