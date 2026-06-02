@@ -2,6 +2,7 @@ package com.app.springapp.service;
 
 import com.app.springapp.domain.dto.JwtTokenDTO;
 import com.app.springapp.domain.dto.UserDTO;
+import com.app.springapp.domain.enums.SocialProvider;
 import com.app.springapp.domain.vo.UserVO;
 import com.app.springapp.domain.vo.SocialUserVO;
 import com.app.springapp.exception.JwtTokenException;
@@ -63,7 +64,7 @@ public class AuthServiceImpl implements AuthService {
         Map<String, String> claims = new HashMap<>();
         claims.put("id", foundUser.getId().toString());
         claims.put("userEmail", foundUser.getUserEmail());
-        claims.put("socialUserProvider", "local");
+        claims.put("socialUserProvider", SocialProvider.LOCAL.getValue());
         claims.put("role", foundUser.getUserRole() != null ? foundUser.getUserRole() : "USER");
 
         String accessToken = jwtTokenUtil.generateAccessToken(claims);
@@ -87,7 +88,7 @@ public class AuthServiceImpl implements AuthService {
         Map<String, String> claims = new HashMap<>();
         claims.put("id", foundUser.getId().toString());
         claims.put("userEmail", foundUser.getUserEmail());
-        claims.put("socialUserProvider", foundUser.getSocialUserProvider());
+        claims.put("socialUserProvider", foundUser.getSocialUserProvider().getValue());
         claims.put("role", foundUser.getUserRole());
 
         String accessToken = jwtTokenUtil.generateAccessToken(claims);
@@ -111,7 +112,7 @@ public class AuthServiceImpl implements AuthService {
         Map<String, String> claims = new HashMap<>();
         claims.put("tempSignup", "true");
         claims.put("userEmail", userDTO.getUserEmail() != null ? userDTO.getUserEmail() : "");
-        claims.put("socialUserProvider", userDTO.getSocialUserProvider());
+        claims.put("socialUserProvider", userDTO.getSocialUserProvider().getValue());
         claims.put("socialUserProviderId", userDTO.getSocialUserProviderId());
         claims.put("userName", userDTO.getUserName() != null ? userDTO.getUserName() : "");
         return jwtTokenUtil.generateTempSocialToken(claims);
@@ -138,7 +139,7 @@ public class AuthServiceImpl implements AuthService {
         // 이미 가입된 경우 중복 방지
         UserDTO checkDTO = new UserDTO();
         checkDTO.setUserEmail(userEmail);
-        checkDTO.setSocialUserProvider(socialUserProvider);
+        checkDTO.setSocialUserProvider(SocialProvider.fromValue(socialUserProvider));
         if (userDAO.existsUserByUserEmailAndSocialUserProvider(checkDTO)) {
             throw new UserException("이미 가입된 소셜 계정입니다.", HttpStatus.BAD_REQUEST);
         }
@@ -155,7 +156,7 @@ public class AuthServiceImpl implements AuthService {
         // 소셜 유저 연결 정보 저장
         SocialUserVO socialUserVO = new SocialUserVO();
         socialUserVO.setSocialUserProviderId(socialUserProviderId);
-        socialUserVO.setSocialUserProvider(socialUserProvider);
+        socialUserVO.setSocialUserProvider(SocialProvider.fromValue(socialUserProvider));
         socialUserVO.setUserId(userVO.getId());
         socialUserDAO.save(socialUserVO);
 
@@ -285,7 +286,7 @@ public class AuthServiceImpl implements AuthService {
 
         claims.put("id", user.getId().toString());
         claims.put("userEmail", user.getUserEmail());
-        claims.put("socialUserProvider", user.getSocialUserProvider());
+        claims.put("socialUserProvider", user.getSocialUserProvider().getValue());
         claims.put("role", user.getUserRole());
 
         // 새로운 토큰 생성

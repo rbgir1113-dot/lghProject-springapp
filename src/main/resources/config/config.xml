@@ -228,4 +228,8 @@
         <typeAlias type="com.app.springapp.domain.vo.UserWithdrawVO" alias="UserWithdrawVO"/>
         <typeAlias type="com.app.springapp.domain.vo.PaymentVO" alias="PaymentVO"/>
     </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.app.springapp.typehandler.SocialProviderTypeHandler"/>
+    </typeHandlers>
 </configuration>

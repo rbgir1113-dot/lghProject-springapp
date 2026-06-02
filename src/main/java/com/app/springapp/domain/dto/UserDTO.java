@@ -1,5 +1,6 @@
 package com.app.springapp.domain.dto;
 
+import com.app.springapp.domain.enums.SocialProvider;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ public class UserDTO {
     @Schema(description = "소셜 로그인 제공 ID")
     private String socialUserProviderId;
     @Schema(description = "소셜 로그인(google/naver/kakao/local)", example = "local")
-    private String socialUserProvider;
+    private SocialProvider socialUserProvider;
     @Schema(description = "유저 생년월일", example = "1990-01-01")
     private String userBirth;
     @Schema(description = "유저 권한", example = "user")
@@ -47,7 +48,7 @@ public class UserDTO {
 
     //    소셜 로그인 제공자의 초기값
     {
-        socialUserProvider = "local";
+        socialUserProvider = SocialProvider.LOCAL;
         userRole = "user";
     }
 }

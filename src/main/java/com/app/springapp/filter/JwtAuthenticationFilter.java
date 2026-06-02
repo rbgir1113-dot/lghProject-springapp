@@ -2,6 +2,7 @@ package com.app.springapp.filter;
 
 import com.app.springapp.domain.dto.UserDTO;
 import com.app.springapp.domain.dto.response.ApiResponseDTO;
+import com.app.springapp.domain.enums.SocialProvider;
 import com.app.springapp.exception.UserException;
 import com.app.springapp.repository.UserDAO;
 import com.app.springapp.util.JwtTokenUtil;
@@ -76,7 +77,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (userEmail != null && socialUserProvider != null) {
                 UserDTO userDTO = new UserDTO();
                 userDTO.setUserEmail(userEmail);
-                userDTO.setSocialUserProvider(socialUserProvider);
+                userDTO.setSocialUserProvider(SocialProvider.fromValue(socialUserProvider));
                 UserDTO foundUser = userDAO.findUserByUserEmailAndSocialUserProvider(userDTO)
                         .orElseThrow(() -> new UserException("유저 조회 실패", HttpStatus.BAD_REQUEST));
 
