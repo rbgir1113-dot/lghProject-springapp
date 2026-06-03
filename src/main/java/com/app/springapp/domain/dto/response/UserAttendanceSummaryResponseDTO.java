@@ -21,6 +21,9 @@ public class UserAttendanceSummaryResponseDTO {
     @Schema(description = "오늘 출석 안내", example = "+30 XP 획득했어요!")
     private String todayLabel;
 
+    @Schema(description = "오늘 출석으로 받은 EXP", example = "30")
+    private int todayRewardExp;
+
     @Schema(description = "현재 연속 출석일", example = "3")
     private int streakDays;
 
@@ -29,5 +32,13 @@ public class UserAttendanceSummaryResponseDTO {
 
     @Schema(description = "해당 기간 출석 날짜 목록")
     private List<LocalDate> attendanceDates;
+
+    @Schema(description = "사용자 총 EXP", example = "380")
+    private int totalExp;
+
+    @Schema(description = "사용자 획득 배지 개수", example = "1")
+    private int badgeCount;
+
+
 
 }

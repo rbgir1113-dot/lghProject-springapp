@@ -27,6 +27,11 @@ public class UserAttendanceDAO {
         return userAttendanceVO.getId();
     }
 
+    // 오늘 출석 기록 번호 조회
+    public Long findTodayAttendanceId(Long userId) {
+        return userAttendanceMapper.selectTodayAttendanceId(userId);
+    }
+
     // 누적 출석일 조회
     public int findTotalAttendance(Long userId) {
         return userAttendanceMapper.countTotalAttendance(userId);

@@ -2,7 +2,9 @@ package com.app.springapp.service.edu;
 
 import com.app.springapp.domain.dto.response.UserAttendanceSummaryResponseDTO;
 import com.app.springapp.exception.EduException;
+import com.app.springapp.repository.RewardDAO;
 import com.app.springapp.repository.UserAttendanceDAO;
+import com.app.springapp.repository.UserRewardHistoryDAO;
 import com.app.springapp.service.UserExpService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,8 @@ public class UserAttendanceServiceImpl implements UserAttendanceService {
     private final UserAttendanceDAO userAttendanceDAO;
     private final RewardService rewardService;
     private final UserExpService userExpService;
+    private final RewardDAO rewardDAO;
+    private final UserRewardHistoryDAO userRewardHistoryDAO;
 
     // 오늘 출석 등록 후 학습 출석 보상과 레벨 경험치를 각각 지급
     @Override
@@ -50,6 +54,17 @@ public class UserAttendanceServiceImpl implements UserAttendanceService {
         int streakDays = userAttendanceDAO.findConsecutiveDays(userId);
         List<LocalDate> attendanceDates = userAttendanceDAO.findAttendanceDatesByPeriod(userId, startDate, endDate);
 
+        // 보상 정보 조회: 사용자의 총 EXP와 획득 배지 개수
+        int totalExp = rewardDAO.findUserExp(userId);
+        int badgeCount = rewardDAO.findUserBadgeCount(userId);
+
+        // 오늘 받은 EXP 조회: 오늘 출석 기록 기준으로 지급된 보상 합산
+        Long todayAttendanceId = userAttendanceDAO.findTodayAttendanceId(userId);
+        int todayRewardExp = todayAttendanceId == null
+                ? 0
+                : userRewardHistoryDAO.findRewardExpByReferenceId(userId, todayAttendanceId);
+
+
         return UserAttendanceSummaryResponseDTO
                 .builder()
                 .checkedToday(checkedToday)
@@ -60,6 +75,9 @@ public class UserAttendanceServiceImpl implements UserAttendanceService {
                 .streakDays(streakDays)
                 .totalAttendanceDays(totalAttendanceDays)
                 .attendanceDates(attendanceDates)
+                .totalExp(totalExp)
+                .badgeCount(badgeCount)
+                .todayRewardExp(todayRewardExp)
                 .build();
     }
 

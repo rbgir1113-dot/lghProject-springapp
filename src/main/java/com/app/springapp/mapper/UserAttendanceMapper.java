@@ -15,6 +15,9 @@ public interface UserAttendanceMapper {
     // 오늘 출석 등록
     public void insertTodayAttendance(UserAttendanceVO userAttendanceVO);
 
+    // 오늘 출석 기록 번호 조회
+    public Long selectTodayAttendanceId(Long userId);
+
     // 누적 출석일 조회
     public int countTotalAttendance(Long userId);
 

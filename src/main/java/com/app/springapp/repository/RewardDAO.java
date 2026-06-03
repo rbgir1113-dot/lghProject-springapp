@@ -42,4 +42,6 @@ public class RewardDAO {
     public List<UserBadgeDTO> findUserBadges(Long userId) {
         return rewardMapper.selectUserBadgesByUserId(userId);
     }
+
+
 }

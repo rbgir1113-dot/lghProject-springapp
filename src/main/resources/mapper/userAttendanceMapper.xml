@@ -19,6 +19,14 @@
         VALUES (#{id}, TRUNC(SYSDATE), #{userId})
     </insert>
 
+    <!-- 오늘 출석 기록 번호 조회 -->
+    <select id="selectTodayAttendanceId" parameterType="Long" resultType="Long">
+        SELECT ID
+        FROM TBL_USER_ATTENDANCE
+        WHERE USER_ID = #{userId}
+          AND USER_ATTENDANCE_DATE = TRUNC(SYSDATE)
+    </select>
+
     <!-- 누적 출석일 조회 -->
     <select id="countTotalAttendance" parameterType="Long" resultType="int">
         SELECT COUNT(*)
