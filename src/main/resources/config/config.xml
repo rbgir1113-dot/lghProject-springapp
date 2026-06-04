@@ -114,6 +114,7 @@
         <typeAlias type="com.app.springapp.domain.dto.request.MyPageEditRequestDTO" alias="MyPageEditRequestDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.request.MyPageWithdrawRequestDTO" alias="MyPageWithdrawRequestDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.request.ReviewRequestDTO" alias="ReviewRequestDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.request.MyPageCertificateApplyRequestDTO" alias="MyPageCertificateApplyRequestDTO"/>
 
         <!-- Response DTO Alias -->
         <typeAlias type="com.app.springapp.domain.dto.response.UserResponseDTO" alias="UserResponseDTO"/>
@@ -178,6 +179,13 @@
         <typeAlias type="com.app.springapp.domain.dto.response.MyPageLearningStatusResponseDTO" alias="MyPageLearningStatusResponseDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.response.MyPageLearningResultResponseDTO" alias="MyPageLearningResultResponseDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.response.MyPageLearningSummaryResponseDTO" alias="MyPageLearningSummaryResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateItemResponseDTO" alias="MyPageCertificateItemResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateDetailResponseDTO" alias="MyPageCertificateDetailResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateSummaryResponseDTO" alias="MyPageCertificateSummaryResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateCourseResponseDTO" alias="MyPageCertificateCourseResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateResponseDTO" alias="MyPageCertificateResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.AddressSearchResponseDTO" alias="AddressSearchResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateApplyCompleteResponseDTO" alias="MyPageCertificateApplyCompleteResponseDTO"/>
 
         <!-- VO Alias -->
         <typeAlias type="com.app.springapp.domain.vo.UserVO" alias="UserVO"/>
@@ -235,6 +243,7 @@
         <typeAlias type="com.app.springapp.domain.vo.RewardPolicyVO" alias="RewardPolicyVO"/>
         <typeAlias type="com.app.springapp.domain.vo.UserRewardHistoryVO" alias="UserRewardHistoryVO"/>
         <typeAlias type="com.app.springapp.domain.vo.UserExpHistoryVO" alias="UserExpHistoryVO"/>
+        <typeAlias type="com.app.springapp.domain.vo.CertReceiveAddressVO" alias="CertReceiveAddressVO"/>
     </typeAliases>
 
     <typeHandlers>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.app.springapp.mapper.MyPageCertificateMapper">
+
+    <!-- 마이페이지 자격증 목록 조회 -->
+    <select id="selectCertificateListByUserId" parameterType="Long" resultType="MyPageCertificateItemResponseDTO">
+        SELECT
+            TTR.ID AS testResultId,
+            TT.TEST_TITLE AS testTitle,
+            TT.TEST_DATE AS acquiredAt,
+            NVL(TCR.CERT_RENEW_STATUS, 'none') AS certApplyStatus,
+            CASE
+                WHEN TCR.ID IS NULL THEN '미신청'
+                WHEN TCR.CERT_RENEW_STATUS = 'processing' THEN '신청대기'
+                WHEN TCR.CERT_RENEW_STATUS = 'completed' THEN '신청완료'
+                ELSE '미신청'
+                END AS certApplyStatusName,
+            TCR.ID AS certRenewId,
+            CASE
+                WHEN TCR.ID IS NULL THEN 1
+                ELSE 0
+                END AS canApply,
+            CASE
+                WHEN TCR.ID IS NULL THEN '신청하기'
+                WHEN TCR.CERT_RENEW_STATUS = 'processing' THEN '처리중'
+                WHEN TCR.CERT_RENEW_STATUS = 'completed' THEN '완료'
+                ELSE '신청하기'
+                END AS buttonText
+        FROM TBL_TEST_RESULT TTR
+                 JOIN TBL_TEST_APPLY TTA
+                      ON TTR.TEST_APPLY_ID = TTA.ID
+                 JOIN TBL_TEST TT
+                      ON TTA.TEST_ID = TT.ID
+                 LEFT JOIN (
+            SELECT *
+            FROM (
+                     SELECT
+                         TCR2.*,
+                         ROW_NUMBER() OVER (
+                        PARTITION BY TCR2.TEST_RESULT_ID, TCR2.USER_ID
+                        ORDER BY TCR2.ID DESC
+                    ) AS rowNumber
+                     FROM TBL_CERT_RENEW TCR2
+                     WHERE TCR2.USER_ID = #{userId}
+                       AND NVL(TCR2.CERT_RENEW_STATUS, 'processing') != 'cancelled'
+                 )
+            WHERE rowNumber = 1
+        ) TCR
+                           ON TTR.ID = TCR.TEST_RESULT_ID
+        WHERE TTA.USER_ID = #{userId}
+          AND TTR.TEST_RESULT_POINT >= 60
+          AND NVL(TT.TEST_IS_DELETED, 0) = 0
+        ORDER BY TT.TEST_DATE DESC, TTR.ID DESC
+    </select>
+
+    <!-- 선택한 자격증 상세 조회 -->
+    <select id="selectCertificateDetailByTestResultId" parameterType="map" resultType="MyPageCertificateDetailResponseDTO">
+        SELECT
+            TTR.ID AS testResultId,
+            TT.TEST_TITLE AS testTitle,
+            TT.TEST_DATE AS acquiredAt,
+            NVL(TCR.CERT_RENEW_STATUS, 'none') AS certApplyStatus,
+            CASE
+                WHEN TCR.ID IS NULL THEN '미신청'
+                WHEN TCR.CERT_RENEW_STATUS = 'processing' THEN '신청대기'
+                WHEN TCR.CERT_RENEW_STATUS = 'completed' THEN '신청완료'
+                ELSE '미신청'
+                END AS certApplyStatusName,
+            TCR.ID AS certRenewId,
+            CASE
+                WHEN TCR.ID IS NULL THEN 1
+                ELSE 0
+                END AS canApply
+        FROM TBL_TEST_RESULT TTR
+                 JOIN TBL_TEST_APPLY TTA
+                      ON TTR.TEST_APPLY_ID = TTA.ID
+                 JOIN TBL_TEST TT
+                      ON TTA.TEST_ID = TT.ID
+                 LEFT JOIN (
+            SELECT *
+            FROM (
+                     SELECT
+                         TCR2.*,
+                         ROW_NUMBER() OVER (
+                        PARTITION BY TCR2.TEST_RESULT_ID, TCR2.USER_ID
+                        ORDER BY TCR2.ID DESC
+                    ) AS rowNumber
+                     FROM TBL_CERT_RENEW TCR2
+                     WHERE TCR2.USER_ID = #{userId}
+                       AND NVL(TCR2.CERT_RENEW_STATUS, 'processing') != 'cancelled'
+                 )
+            WHERE rowNumber = 1
+        ) TCR
+                           ON TTR.ID = TCR.TEST_RESULT_ID
+        WHERE TTA.USER_ID = #{userId}
+          AND TTR.ID = #{testResultId}
+          AND TTR.TEST_RESULT_POINT >= 60
+          AND NVL(TT.TEST_IS_DELETED, 0) = 0
+    </select>
+
+    <!-- 마이페이지 자격증 요약 조회 -->
+    <select id="selectCertificateSummaryByUserId" parameterType="Long" resultType="MyPageCertificateSummaryResponseDTO">
+        SELECT
+            (
+                SELECT COUNT(DISTINCT TES.EDU_ID)
+                FROM TBL_EDU_START TES
+                         JOIN TBL_EDU TE
+                              ON TES.EDU_ID = TE.ID
+                WHERE TES.USER_ID = #{userId}
+                  AND TE.EDU_IS_DELETED = 0
+            ) AS courseCount,
+            (
+                SELECT COUNT(*)
+                FROM TBL_TEST_RESULT TTR
+                         JOIN TBL_TEST_APPLY TTA
+                              ON TTR.TEST_APPLY_ID = TTA.ID
+                         JOIN TBL_TEST TT
+                              ON TTA.TEST_ID = TT.ID
+                WHERE TTA.USER_ID = #{userId}
+                  AND TTR.TEST_RESULT_POINT >= 60
+                  AND NVL(TT.TEST_IS_DELETED, 0) = 0
+            ) AS certificateCount,
+            (
+                SELECT COUNT(*)
+                FROM TBL_TEST_RESULT TTR
+                         JOIN TBL_TEST_APPLY TTA
+                              ON TTR.TEST_APPLY_ID = TTA.ID
+                         JOIN TBL_TEST TT
+                              ON TTA.TEST_ID = TT.ID
+                WHERE TTA.USER_ID = #{userId}
+                  AND TTR.TEST_RESULT_POINT >= 60
+                  AND NVL(TT.TEST_IS_DELETED, 0) = 0
+                  AND NOT EXISTS (
+                    SELECT 1
+                    FROM TBL_CERT_RENEW TCR
+                    WHERE TCR.TEST_RESULT_ID = TTR.ID
+                      AND TCR.USER_ID = #{userId}
+                      AND NVL(TCR.CERT_RENEW_STATUS, 'processing') != 'cancelled'
+                )
+            ) AS availableApplyCount,
+            (
+                SELECT COUNT(*)
+                FROM TBL_CERT_RENEW
+                WHERE USER_ID = #{userId}
+                  AND CERT_RENEW_STATUS = 'processing'
+            ) AS processingApplyCount,
+            (
+                SELECT COUNT(*)
+                FROM TBL_CERT_RENEW
+                WHERE USER_ID = #{userId}
+                  AND CERT_RENEW_STATUS = 'completed'
+            ) AS completedApplyCount
+        FROM DUAL
+    </select>
+
+    <!-- 마이페이지 자격증 수강중인 강좌 조회 -->
+    <select id="selectCourseListByUserId" parameterType="Long" resultType="MyPageCertificateCourseResponseDTO">
+        SELECT
+            TE.ID AS eduId,
+            TE.EDU_TITLE AS eduTitle,
+            TE.EDU_DETAIL AS eduDetail,
+            NULL AS thumbnailUrl,
+            MIN(TEV.EDU_VIDEO_URL) AS youtubeUrl,
+            CASE
+                WHEN COUNT(TEWM.ID) = 0 THEN 0
+                ELSE ROUND((COUNT(CASE WHEN TWS.WORD_STUDY_IS_COMPLETED = 1 THEN 1 END) / COUNT(TEWM.ID)) * 100)
+                END AS progressPercent,
+            TO_CHAR(MIN(TES.EDU_START_AT), 'YYYY.MM.DD') || ' ~ ' ||
+            TO_CHAR(ADD_MONTHS(MIN(TES.EDU_START_AT), 12), 'YYYY.MM.DD') AS studyPeriod
+        FROM TBL_EDU_START TES
+                 JOIN TBL_EDU TE
+                      ON TES.EDU_ID = TE.ID
+                 LEFT JOIN TBL_EDU_WORD_MAP TEWM
+                           ON TE.ID = TEWM.EDU_ID
+                 LEFT JOIN TBL_WORDS TW
+                           ON TEWM.WORDS_ID = TW.ID
+                 LEFT JOIN TBL_EDU_VIDEO TEV
+                           ON TW.EDU_VIDEO_ID = TEV.ID
+                 LEFT JOIN TBL_WORD_STUDY TWS
+                           ON TEWM.ID = TWS.EDU_WORD_MAP_ID
+                               AND TWS.USER_ID = #{userId}
+        WHERE TES.USER_ID = #{userId}
+          AND TE.EDU_IS_DELETED = 0
+        GROUP BY TE.ID, TE.EDU_TITLE, TE.EDU_DETAIL
+        ORDER BY MIN(TES.EDU_START_AT) DESC, TE.ID DESC
+    </select>
+
+    <!-- 자격증 실물 신청 저장 -->
+    <insert id="insertCertRenew" parameterType="CertRenewVO">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT SEQ_CERT_RENEW.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TBL_CERT_RENEW (
+        ID,
+        CERT_RENEW_CREATE_AT,
+        TEST_RESULT_ID,
+        USER_ID,
+        CERT_RENEW_TYPE,
+        CERT_RECEIVE_TYPE,
+        CERT_NO,
+        CERT_NAME,
+        CERT_PHONE,
+        CERT_ADDRESS,
+        CERT_RENEW_STATUS
+        ) VALUES (
+        #{id},
+        SYSDATE,
+        #{testResultId},
+        #{userId},
+        #{certRenewType},
+        #{certReceiveType},
+        #{certNo},
+        #{certName},
+        #{certPhone},
+        #{certAddress},
+        'processing'
+        )
+    </insert>
+
+    <!-- 자격증 실물 수령 주소 저장 -->
+    <insert id="insertCertReceiveAddress" parameterType="CertReceiveAddressVO">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT SEQ_CERT_RECEIVE_ADDRESS.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TBL_CERT_RECEIVE_ADDRESS (
+        ID,
+        CERT_POSTCODE,
+        CERT_ROAD_ADDRESS,
+        CERT_JIBUN_ADDRESS,
+        CERT_DETAIL_ADDRESS,
+        CERT_ADDRESS,
+        CERT_RECEIVE_ADDRESS_CREATE_AT,
+        CERT_RENEW_ID
+        ) VALUES (
+        #{id},
+        #{certPostcode},
+        #{certRoadAddress},
+        #{certJibunAddress},
+        #{certDetailAddress},
+        #{certAddress},
+        SYSDATE,
+        #{certRenewId}
+        )
+    </insert>
+
+    <!-- 자격증 실물 신청 완료 조회 -->
+    <select id="selectApplyCompleteByCertRenewId" parameterType="map" resultType="MyPageCertificateApplyCompleteResponseDTO">
+        SELECT
+            TCR.ID AS certRenewId,
+            TTR.ID AS testResultId,
+            TT.TEST_TITLE AS testTitle,
+            TT.TEST_DATE AS acquiredAt,
+            TCR.CERT_RENEW_STATUS AS certApplyStatus,
+            CASE
+                WHEN TCR.CERT_RENEW_STATUS = 'processing' THEN '신청대기'
+                WHEN TCR.CERT_RENEW_STATUS = 'completed' THEN '신청완료'
+                ELSE '미신청'
+                END AS certApplyStatusName,
+            TCRA.CERT_POSTCODE AS certPostcode,
+            TCRA.CERT_ROAD_ADDRESS AS certRoadAddress,
+            TCRA.CERT_JIBUN_ADDRESS AS certJibunAddress,
+            TCRA.CERT_DETAIL_ADDRESS AS certDetailAddress,
+            TCRA.CERT_ADDRESS AS certAddress
+        FROM TBL_CERT_RENEW TCR
+                 JOIN TBL_TEST_RESULT TTR
+                      ON TCR.TEST_RESULT_ID = TTR.ID
+                 JOIN TBL_TEST_APPLY TTA
+                      ON TTR.TEST_APPLY_ID = TTA.ID
+                 JOIN TBL_TEST TT
+                      ON TTA.TEST_ID = TT.ID
+                 LEFT JOIN TBL_CERT_RECEIVE_ADDRESS TCRA
+                           ON TCR.ID = TCRA.CERT_RENEW_ID
+        WHERE TCR.ID = #{certRenewId}
+          AND TCR.USER_ID = #{userId}
+    </select>
+
+</mapper>
