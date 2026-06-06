@@ -9,9 +9,12 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -34,6 +39,8 @@ public class SignWordServiceImpl implements SignWordService {
     private final SignWordDAO signWordDAO;
     private final RestTemplate restTemplate;
     private final ChatClient chatClient;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
     @Value("${culture.api.sign-word.base-url}")
     private String baseUrl;
@@ -101,7 +108,7 @@ public class SignWordServiceImpl implements SignWordService {
     }
 
     // 오늘의 수어 영상 3개 (날짜 기반 + 이모지 생성) -> 학습 검색쪽에 넣어두기!
-    @Cacheable(value = "todaySignWords", key = "T(java.time.LocalDate).now().toString()")
+    @Cacheable(value = "todaySignWords", key = "T(java.time.LocalDate).now().toString()", unless = "#result == null || #result.isEmpty()")
     @Override
     public List<SignWordResponseDTO> getTodaySignWords() {
         long seed = LocalDate.now().toEpochDay();
@@ -128,12 +135,19 @@ public class SignWordServiceImpl implements SignWordService {
         return LocalDate.now().toString();
     }
 
-    // 자정마다 캐시 초기화
+    // 자정마다 자동 초기화
     @Scheduled(cron = "0 0 0 * * *")
-    @CacheEvict(value = "todaySignWords", allEntries = true)
-    public void clearTodaySignWordsCache() {
-        log.info("오늘의 수어 캐시 초기화");
+    public void scheduledClearCache() {
+        log.warn("=== 캐시 자동 초기화 실행 ===");
+        redisTemplate.delete("todaySignWords::" + LocalDate.now().toString());
     }
+
+        // 수동 캐시 초기화
+        @CacheEvict(value = "todaySignWords", allEntries = true)
+        @Override
+        public void clearTodaySignWordsCache() {
+            log.info("오늘의 수어 캐시 초기화");
+        }
 
     // 문화공공데이터 OpenAPI 호출
     private String requestSignWordOpenApi(String keyword, int pageNo, int numOfRows) {
@@ -155,6 +169,11 @@ public class SignWordServiceImpl implements SignWordService {
         try {
             XmlMapper xmlMapper = new XmlMapper();
             SignWordXmlResponseDTO responseDTO = xmlMapper.readValue(xml, SignWordXmlResponseDTO.class);
+
+            log.warn("파싱 결과 - body: {}, items: {}",
+                    responseDTO.getBody(),
+                    responseDTO.getBody() != null ? responseDTO.getBody().getItems() : "null");
+
 
             if (responseDTO.getBody() == null || responseDTO.getBody().getItems() == null) {
                 return List.of();
