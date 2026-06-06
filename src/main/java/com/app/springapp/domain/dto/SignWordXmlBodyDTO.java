@@ -14,7 +14,7 @@ import java.util.List;
 @Schema(description = "OpenAPI 수어 XML 본문 DTO")
 public class SignWordXmlBodyDTO {
 
-    @JacksonXmlElementWrapper(localName = "items") //  items -> 큰 박스
+    @JacksonXmlElementWrapper(useWrapping = false) //  items -> 큰 박스
     @JacksonXmlProperty(localName = "item") // 큰 박스 -> item을 리스트로 담음
     @Schema(description = "수어 단어 목록")
     private List<SignWordXmlItemDTO> items;

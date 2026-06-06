@@ -55,5 +55,11 @@ public class SignWordApi {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "오늘의 수어 영상 조회 성공", signWordService.getTodaySignWords()));
     }
+
+    @DeleteMapping("/today/cache")
+    public ResponseEntity<ApiResponseDTO> clearCache() {
+        signWordService.clearTodaySignWordsCache();
+        return ResponseEntity.ok(ApiResponseDTO.of(true, "캐시 초기화 완료", null));
+    }
 }
 

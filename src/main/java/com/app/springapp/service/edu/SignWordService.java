@@ -29,4 +29,7 @@ public interface SignWordService {
 
     // 오늘의 수어 영상 3개 (날짜 기반)
     public List<SignWordResponseDTO> getTodaySignWords();
+
+    void clearTodaySignWordsCache();
+    void scheduledClearCache();
 }
