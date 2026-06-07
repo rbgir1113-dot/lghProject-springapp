@@ -74,7 +74,7 @@ public class ChatServiceImpl implements ChatService {
 
         try {
             if(!isJoined) {
-                chatRoomService.joinChatRoom(chatRoomId);
+                chatRoomService.joinChatRoom(chatRoomId, userId);
             }
             chatDAO.save(chatVO);
             id = chatVO.getId();
