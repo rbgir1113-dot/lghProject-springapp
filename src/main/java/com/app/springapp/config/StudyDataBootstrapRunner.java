@@ -5,14 +5,15 @@ import com.app.springapp.exception.EduException;
 import com.app.springapp.repository.SignWordDAO;
 import com.app.springapp.service.edu.EduWordMapService;
 import com.app.springapp.service.edu.SignWordService;
-import io.swagger.v3.oas.models.OpenAPI;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StudyDataBootstrapRunner implements ApplicationRunner {
@@ -27,26 +28,26 @@ public class StudyDataBootstrapRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         if (!bootstrapEnabled) {
+            log.info("study bootstrap enabled = {}", bootstrapEnabled);
             return;
         }
 
         int signWordCount = signWordDAO.countAll();
-        System.out.println("study bootstrap enabled = " + bootstrapEnabled);
-        System.out.println("sign word count before sync = " + signWordCount);
+        log.info("sign word count before sync = {}", signWordCount);
 
         if (signWordCount == 0) {
             int totalSavedCount = 0;
+
             for (int pageNo = 1; pageNo <= 3; pageNo++) {
                 totalSavedCount += signWordService.syncSignWords(pageNo, 100);
+                log.info("sign word saved count = {}", totalSavedCount);
             }
 
             int afterSyncCount = signWordDAO.countAll();
-
-            System.out.println("sign word saved count = " + totalSavedCount);
-            System.out.println("sign word count after sync = " + afterSyncCount);
+            log.info("sign word count after sync = {}", afterSyncCount);
 
             if (afterSyncCount == 0) {
-                System.out.println("study bootstrap stopped: OpenAPI sync result is empty.");
+                log.warn("study bootstrap stopped: OpenAPI sync result is empty.");
                 return;
             }
         }
@@ -87,6 +88,20 @@ public class StudyDataBootstrapRunner implements ApplicationRunner {
             if (e.getHttpStatus() == HttpStatus.CONFLICT) {
                 return;
             }
+            // 데이터 일부 누락된 채 실행되는 것 < 서버 시작 실패로 바로 원인 드러나는 것
+            log.warn(
+                    "study bootstrap edu word skipped. eduId={}, signWordId={}, reason={}",
+                    eduId, signWordId, e.getMessage()
+            );
+
+            throw e;
+        } catch (Exception e) {
+            log.error(
+                    "study bootstrap edu word failed. eduId={}, signWordId={}",
+                    eduId,
+                    signWordId,
+                    e
+            );
             throw e;
         }
     }
