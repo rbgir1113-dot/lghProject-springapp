@@ -28,24 +28,24 @@ public class StudyDataBootstrapRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         if (!bootstrapEnabled) {
-            log.info("study bootstrap enabled = {}", bootstrapEnabled);
+//            log.info("study bootstrap enabled = {}", bootstrapEnabled);
             return;
         }
 
         int signWordCount = signWordDAO.countAll();
-        log.info("sign word count before sync = {}", signWordCount);
+//        log.info("sign word count before sync = {}", signWordCount);
 
         if (signWordCount == 0) {
             int totalSavedCount = 0;
 
             totalSavedCount += signWordService.syncSignWords(1, 3617);
-            log.info("sign word saved count = {}", totalSavedCount);
+//            log.info("sign word saved count = {}", totalSavedCount);
 
             int afterSyncCount = signWordDAO.countAll();
-            log.info("sign word count after sync = {}", afterSyncCount);
+//            log.info("sign word count after sync = {}", afterSyncCount);
 
             if (afterSyncCount == 0) {
-                log.warn("study bootstrap stopped: OpenAPI sync result is empty.");
+//                log.warn("study bootstrap stopped: OpenAPI sync result is empty.");
                 return;
             }
         }
