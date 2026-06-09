@@ -5,6 +5,7 @@ import com.app.springapp.mapper.CommunityUserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -12,7 +13,7 @@ import java.util.Optional;
 public class CommunityUserDAO {
     private final CommunityUserMapper communityUserMapper;
 
-    public Optional<CommunityUserDTO> findById(Long id){
-        return Optional.ofNullable(communityUserMapper.select(id));
+    public Optional<CommunityUserDTO> findById(Map<String,Object> req){
+        return Optional.ofNullable(communityUserMapper.select(req));
     }
 }

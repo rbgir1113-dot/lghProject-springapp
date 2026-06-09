@@ -4,13 +4,15 @@ import com.app.springapp.domain.dto.response.ApiResponseDTO;
 import com.app.springapp.domain.dto.response.CommunityUserResponseDTO;
 import com.app.springapp.domain.dto.response.UserResponseDTO;
 import com.app.springapp.service.CommunityProfileService;
+import com.app.springapp.util.JwtTokenUtil;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RequestMapping("/api/community-profile")
 @RestController
@@ -18,12 +20,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class CommunityProfileApi {
 
     private final CommunityProfileService communityProfileService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseDTO> getUserInfo(
-            @PathVariable long id
+            @PathVariable long id,
+            @CookieValue(value = "accessToken", required = false) String accessToken
     ) {
-        CommunityUserResponseDTO communityUserResponseDTO = communityProfileService.getUserInfo(id);
+        Long userId = null;
+        Map<String,Object> req = new HashMap<>();
+        if (accessToken != null) {
+            try {
+                Claims claims = jwtTokenUtil.parseToken(accessToken);
+                userId = Long.parseLong((String) claims.get("id"));
+            } catch (Exception e) {
+                // 토큰이 유효하지 않으면 비로그인으로 처리
+            }
+        }
+        req.put("id", id);
+        req.put("userId", userId);
+        CommunityUserResponseDTO communityUserResponseDTO = communityProfileService.getUserInfo(req);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "커뮤니티 유저 프로필 정보 로드 성공", communityUserResponseDTO));
