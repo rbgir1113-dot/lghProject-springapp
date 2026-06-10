@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +29,7 @@ public class PrivateFollowApi {
     }
 
 //    유저 팔로우 취소하기
-    @GetMapping("/cancel/{followingId}")
+    @DeleteMapping("/cancel/{followingId}")
     public ResponseEntity<ApiResponseDTO> cancelFollow(
             @PathVariable Long followingId,
             Authentication authentication
