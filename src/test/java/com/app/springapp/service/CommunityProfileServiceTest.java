@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @SpringBootTest
 @Slf4j
 public class CommunityProfileServiceTest {
@@ -14,8 +17,14 @@ public class CommunityProfileServiceTest {
 
     @Test
     public void getUserInfoTest() {
-        Long userId = 2L;
-        CommunityUserResponseDTO communityUserResponseDTO = communityProfileService.getUserInfo(userId);
+        Long id = 1L;
+        Long followerId = 1L;
+
+        Map<String,Object> req = new HashMap<>();
+        req.put("id", id);
+        req.put("userId", followerId);
+
+        CommunityUserResponseDTO communityUserResponseDTO = communityProfileService.getUserInfo(req);
         log.info("userResponseDTO={}", communityUserResponseDTO);
     }
 }

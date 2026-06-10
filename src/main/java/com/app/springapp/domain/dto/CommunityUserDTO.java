@@ -53,4 +53,8 @@ public class CommunityUserDTO {
     private int commentCount;
     @Schema(description = "유저가 받은 좋아요 갯수", example = "1")
     private int getLikeCount;
+    @Schema(description = "사용자가 해당 유저 팔로우 하는 여부", example = "true")
+    private Boolean isFollow;
+    @Schema(description = "사용자 자신 프로필인 여부", example = "true")
+    private Boolean isMe;
 }

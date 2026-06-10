@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.app.springapp.mapper.FollowMapper">
+    <insert id="insert" parameterType="FollowVO">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT SEQ_FOLLOW.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO TBL_FOLLOW (ID, FOLLOW_TYPE,  FOLLOWER_ID, FOLLOWING_ID)
+        VALUES (#{id}, '일반', #{followerId}, #{followingId})
+    </insert>
+
+    <delete id="deleteByFollowerIdAndFollowingId" parameterType="FollowVO">
+        DELETE FROM TBL_FOLLOW
+        WHERE FOLLOWER_ID = #{followerId} AND FOLLOWING_ID = #{followingId}
+    </delete>
+</mapper>
