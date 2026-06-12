@@ -1,6 +1,7 @@
 package com.app.springapp.service.edu;
 
 import com.app.springapp.domain.dto.response.SignWordResponseDTO;
+import com.app.springapp.domain.dto.response.SignWordWeeklyRecommendationResponseDTO;
 import com.app.springapp.domain.vo.SignWordVO;
 
 import java.util.List;
@@ -30,6 +31,12 @@ public interface SignWordService {
     // 오늘의 수어 영상 3개 (날짜 기반)
     public List<SignWordResponseDTO> getTodaySignWords();
 
+
     void clearTodaySignWordsCache();
     void scheduledClearCache();
+
+    // 주간 추천 수어 단어 조회
+    public List<SignWordWeeklyRecommendationResponseDTO> getWeeklyRecommendedSignWords();
+
+
 }

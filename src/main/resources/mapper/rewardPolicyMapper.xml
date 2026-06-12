@@ -24,5 +24,5 @@
         WHERE REWARD_TYPE = #{rewardType}
         ORDER BY ID ASC
     </select>
-
+    
 </mapper>

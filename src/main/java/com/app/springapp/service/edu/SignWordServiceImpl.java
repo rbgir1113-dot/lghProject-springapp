@@ -1,7 +1,7 @@
 package com.app.springapp.service.edu;
 
-import com.app.springapp.domain.dto.SignWordXmlItemDTO;
 import com.app.springapp.domain.dto.response.SignWordResponseDTO;
+import com.app.springapp.domain.dto.response.SignWordWeeklyRecommendationResponseDTO;
 import com.app.springapp.domain.dto.response.SignWordXmlResponseDTO;
 import com.app.springapp.domain.vo.SignWordVO;
 import com.app.springapp.exception.EduException;
@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,10 +23,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.temporal.WeekFields;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -36,6 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(rollbackFor = {Exception.class})
 public class SignWordServiceImpl implements SignWordService {
+    private static final int WEEKLY_RECOMMENDATION_LIMIT = 12;
 
     private final SignWordDAO signWordDAO;
     private final RestTemplate restTemplate;
@@ -117,7 +117,7 @@ public class SignWordServiceImpl implements SignWordService {
     @Cacheable(value = "todaySignWords", key = "T(java.time.LocalDate).now().toString()", unless = "#result == null || #result.isEmpty()")
     @Override
     public List<SignWordResponseDTO> getTodaySignWords() {
-//        long seed = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+09:00")); // 1분뒤 뱐걍
+        // long seed = LocalDateTime.now().toEpochSecond(ZoneOffset.of("+09:00")); // 1분뒤 뱐걍
         long seed = LocalDate.now().toEpochDay();
         List<SignWordResponseDTO> allWords = getSignWords();
         Collections.shuffle(allWords, new Random(seed));
@@ -143,19 +143,55 @@ public class SignWordServiceImpl implements SignWordService {
     }
 
     // 자정마다 자동 초기화
-//    @Scheduled(cron = "0 */1 * * * *") // 1분마다 캐쉬 초기화
+    // @Scheduled(cron = "0 */1 * * * *") // 1분마다 캐쉬 초기화
     @Scheduled(cron = "0 0 0 * * *")
     public void scheduledClearCache() {
         log.warn("=== 캐시 자동 초기화 실행 ===");
         redisTemplate.delete("todaySignWords::" + LocalDate.now().toString());
     }
 
-        // 수동 캐시 초기화
-        @CacheEvict(value = "todaySignWords", allEntries = true)
-        @Override
-        public void clearTodaySignWordsCache() {
-            log.info("오늘의 수어 캐시 초기화");
-        }
+    // 수동 캐시 초기화
+    @CacheEvict(value = "todaySignWords", allEntries = true)
+    @Override
+    public void clearTodaySignWordsCache() {
+        log.info("오늘의 수어 캐시 초기화");
+    }
+
+    // 주간 추천 수어 단어 조회
+    @Override
+    public List<SignWordWeeklyRecommendationResponseDTO> getWeeklyRecommendedSignWords() {
+        WeekFields weekFields = WeekFields.of(Locale.KOREA);
+        LocalDate now = LocalDate.now();
+
+        String weekKey = now.getYear() + "-" + now.get(weekFields.weekOfYear());
+
+        List<SignWordWeeklyRecommendationResponseDTO> recommendations =
+                signWordDAO.findWeeklyRecommendations(weekKey, WEEKLY_RECOMMENDATION_LIMIT);
+
+        return  recommendations.stream()
+                .map(recommendation -> {
+                    String displayTitle = recommendation.getSignWordTitle().split(",")[0].trim();
+                    recommendation.setSignWordTitle(displayTitle);
+
+                    if (recommendation.getSignWordEmoji() != null && !recommendation.getSignWordEmoji().isBlank()) {
+                        return recommendation;
+                    }
+
+                    String signWordEmoji  = "🤟";
+
+                    try {
+                        signWordEmoji = generateEmoji(displayTitle);
+                    } catch (Exception e) {
+                        log.warn("추천 수어 이모지 생성 실패. signWordId={}", recommendation.getId(), e);
+                    }
+
+                    recommendation.setSignWordEmoji(signWordEmoji);
+                    signWordDAO.saveEmoji(recommendation.getId(), signWordEmoji);
+
+                    return recommendation;
+                })
+                .toList();
+    }
 
     // 문화공공데이터 OpenAPI 호출
     private String requestSignWordOpenApi(String keyword, int pageNo, int numOfRows) {

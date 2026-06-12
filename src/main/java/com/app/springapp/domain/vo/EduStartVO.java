@@ -11,4 +11,5 @@ public class EduStartVO {
     private LocalDateTime eduStartAt;
     private Long userId;
     private Long eduId;
+    private int eduStartIsCompleted;
 }

@@ -189,6 +189,7 @@
         <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateResponseDTO" alias="MyPageCertificateResponseDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.response.AddressSearchResponseDTO" alias="AddressSearchResponseDTO"/>
         <typeAlias type="com.app.springapp.domain.dto.response.MyPageCertificateApplyCompleteResponseDTO" alias="MyPageCertificateApplyCompleteResponseDTO"/>
+        <typeAlias type="com.app.springapp.domain.dto.response.SignWordWeeklyRecommendationResponseDTO" alias="SignWordWeeklyRecommendationResponseDTO"/>
 
 
         <!-- VO Alias -->

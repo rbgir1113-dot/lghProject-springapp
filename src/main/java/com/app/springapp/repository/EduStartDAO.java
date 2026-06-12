@@ -22,4 +22,19 @@ public class EduStartDAO {
     public void save(EduStartVO eduStartVO) {
         eduStartMapper.insert(eduStartVO);
     }
+
+    // 학습 세션 완료 처리
+    public void updateCompleted(Long userId, Long eduId) {
+        eduStartMapper.updateCompleted(userId, eduId);
+    }
+
+    // 학습 세션 완료 여부 조회
+    public boolean existsCompletedEduStart(Long userId, Long eduId) {
+        return eduStartMapper.countCompletedByUserIdAndEduId(userId, eduId) > 0;
+    }
+
+    // 사용자의 특정 학습 미완료 시작 기록 존재 여부 조회
+    public boolean existsIncompleteEduStart(Long userId, Long eduId) {
+        return eduStartMapper.countIncompleteByUserIdAndEduId(userId, eduId) > 0;
+    }
 }

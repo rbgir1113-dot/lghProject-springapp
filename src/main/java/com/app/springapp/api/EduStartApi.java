@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -46,4 +43,76 @@ public class EduStartApi {
                 .body(ApiResponseDTO.of(true, "학습 시작 기록 등록 성공", null)
         );
     }
+
+
+    @PatchMapping("/users/{userId}/edus/{eduId}/complete")
+    @Operation(summary = "학습 세션 완료 처리", description = "사용자가 랜덤 학습 문제 세트를 완료했을 때 학습 시작 기록을 완료 상태로 변경합니다.")
+    @ApiResponse(responseCode = "200", description = "학습 세션 완료 처리 성공")
+    @ApiResponse(responseCode = "404", description = "학습 정보를 찾을 수 없음")
+    @Parameter(
+            name = "userId",
+            description = "유저 번호",
+            required = true,
+            in = ParameterIn.PATH,
+            example = "1",
+            schema = @Schema(type = "number")
+    )
+    @Parameter(
+            name = "eduId",
+            description = "학습 번호",
+            required = true,
+            in = ParameterIn.PATH,
+            example = "1",
+            schema = @Schema(type = "number")
+    )
+    public ResponseEntity<ApiResponseDTO> completeEduStart(@PathVariable Long userId, @PathVariable Long eduId) {
+        eduStartService.completeEduStart(userId, eduId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDTO.of(true, "학습 세션 완료 처리 성공", null));
+    }
+
+
+    @GetMapping("/users/{userId}/edus/{eduId}/completed")
+    @Operation(summary = "학습 세션 완료 여부 조회", description = "사용자가 해당 학습의 랜덤 문제 세트를 완료했는지 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "학습 세션 완료 여부 조회 성공")
+    @ApiResponse(responseCode = "404", description = "학습 세션 완료 정보를 찾을 수 없음")
+    @Parameter(
+            name = "userId",
+            description = "유저 번호",
+            required = true,
+            in = ParameterIn.PATH,
+            example = "1",
+            schema = @Schema(type = "number")
+    )
+    @Parameter(
+            name = "eduId",
+            description = "학습 번호",
+            required = true,
+            in = ParameterIn.PATH,
+            example = "1",
+            schema = @Schema(type = "number")
+    )
+    public ResponseEntity<ApiResponseDTO> isEduStartCompleted(@PathVariable Long userId, @PathVariable Long eduId) {
+        boolean completed = eduStartService.isEduStartCompleted(userId, eduId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDTO.of(true, "학습 세션 완료 여부 조회 성공", completed));
+    }
+
+    @PostMapping("/users/{userId}/edus/{eduId}/roadmap-reward")
+    @Operation(summary = "학습 로드맵 이벤트 보상 수령", description = "완료한 학습의 로드맵 이벤트 보상을 수령합니다.")
+    @ApiResponse(responseCode = "200", description = "학습 로드맵 이벤트 보상 수령 성공")
+    @ApiResponse(responseCode = "400", description = "학습을 완료하지 않은 사용자")
+    @ApiResponse(responseCode = "404", description = "학습 시작 기록을 찾을 수 없음")
+    public ResponseEntity<ApiResponseDTO> claimRoadmapReward(@PathVariable Long userId, @PathVariable Long eduId) {
+        int rewardExp = eduStartService.claimRoadmapReward(userId, eduId);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDTO.of(true, "학습 로드맵 이벤트 보상 수령 성공", rewardExp));
+    }
+
 }

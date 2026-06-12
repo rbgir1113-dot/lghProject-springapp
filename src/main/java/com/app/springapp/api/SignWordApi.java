@@ -19,8 +19,7 @@ public class SignWordApi {
     private final SignWordService signWordService;
 
     //  GET /api/sign-words?keyword=승려
-    //  → DB에서 검색
-    //  → React에 반환
+    //  → DB에서 검색 ->  → React에 반환
     @GetMapping(value = "", produces = "application/json")
     @Operation(summary = "수어 검색", description = "DB에 저장된 수어 정보를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "수어 검색 성공")
@@ -54,6 +53,16 @@ public class SignWordApi {
     public ResponseEntity<ApiResponseDTO> getTodaySignWords() {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponseDTO.of(true, "오늘의 수어 영상 조회 성공", signWordService.getTodaySignWords()));
+    }
+
+    // GET /api/sign-words/weekly-recommendations
+    @GetMapping("/weekly-recommendations")
+    @Operation(summary = "주간 추천 수어 단어 조회", description = "학습 메인 검색 영역에 보여줄 주간 추천 수어 단어와 이모지를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "주간 추천 수어 단어 조회 성공")
+    public ResponseEntity<ApiResponseDTO> getWeeklyRecommendedSignWords() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDTO.of(true, "주간 추천 수어 단어 조회 성공", signWordService.getWeeklyRecommendedSignWords()));
     }
 
     @DeleteMapping("/today/cache")

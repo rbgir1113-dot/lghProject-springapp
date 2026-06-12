@@ -93,4 +93,27 @@
            OR SIGN_WORD_CATEGORY LIKE '%' || #{keyword} || '%'
     </select>
 
+    <!-- 주간 추천 수어 단어 조회 -->
+    <select id="selectWeeklyRecommendations" resultType="SignWordWeeklyRecommendationResponseDTO">
+        SELECT ID, SIGN_WORD_TITLE, SIGN_WORD_EMOJI
+        FROM (
+                 SELECT ID, SIGN_WORD_TITLE, SIGN_WORD_EMOJI
+                 FROM TBL_SIGN_WORD
+                 WHERE SIGN_WORD_TITLE IS NOT NULL
+                   AND SIGN_WORD_CATEGORY IS NOT NULL
+                   AND SIGN_WORD_CATEGORY != '분류 정보 없음'
+                   AND SIGN_WORD_TITLE NOT LIKE '%-%'
+                   AND LENGTH(SIGN_WORD_TITLE) <![CDATA[<=]]> 20
+                 ORDER BY ORA_HASH(SIGN_WORD_TITLE || #{weekKey})
+        )
+        WHERE ROWNUM <![CDATA[<=]]> #{limit}
+    </select>
+
+    <!-- 수어 단어 추천 이모지 저장 -->
+    <update id="updateEmoji">
+        UPDATE TBL_SIGN_WORD
+        SET SIGN_WORD_EMOJI = #{signWordEmoji}
+        WHERE ID = #{id}
+    </update>
+
 </mapper>

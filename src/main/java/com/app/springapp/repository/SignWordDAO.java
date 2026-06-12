@@ -1,6 +1,7 @@
 package com.app.springapp.repository;
 
 import com.app.springapp.domain.dto.response.SignWordResponseDTO;
+import com.app.springapp.domain.dto.response.SignWordWeeklyRecommendationResponseDTO;
 import com.app.springapp.domain.vo.SignWordVO;
 import com.app.springapp.mapper.SignWordMapper;
 import lombok.RequiredArgsConstructor;
@@ -57,5 +58,15 @@ public class SignWordDAO {
     // 수어 검색 개수 조회
     public int countByKeyword(String keyword) {
         return signWordMapper.countByKeyword(keyword);
+    }
+
+    // 주간 추천 수어 단어 조회
+    public List<SignWordWeeklyRecommendationResponseDTO> findWeeklyRecommendations(String weekKey, int limit) {
+        return signWordMapper.selectWeeklyRecommendations(weekKey, limit);
+    }
+
+    // 수어 단어 추천 이모지 저장
+    public void saveEmoji(Long id, String signWordEmoji) {
+        signWordMapper.updateEmoji(id, signWordEmoji);
     }
 }

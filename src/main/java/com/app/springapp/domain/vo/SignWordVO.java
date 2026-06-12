@@ -18,5 +18,6 @@ public class SignWordVO {
     private String signWordSourceUrl;
     private LocalDateTime signWordCreateAt;
     private LocalDateTime signWordUpdateAt;
+    private String signWordEmoji;
 
 }

@@ -1,6 +1,7 @@
 package com.app.springapp.mapper;
 
 import com.app.springapp.domain.dto.response.SignWordResponseDTO;
+import com.app.springapp.domain.dto.response.SignWordWeeklyRecommendationResponseDTO;
 import com.app.springapp.domain.vo.SignWordVO;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -34,4 +35,10 @@ public interface SignWordMapper {
 
     // 수어 검색 개수 조회
     public int countByKeyword(String keyword);
+
+    // 주간 추천 수어 단어 조회
+    public List<SignWordWeeklyRecommendationResponseDTO> selectWeeklyRecommendations(String weekKey, int limit);
+
+    // 수어 단어 추천 이모지 저장
+    public void updateEmoji(Long id, String signWordEmoji);
 }

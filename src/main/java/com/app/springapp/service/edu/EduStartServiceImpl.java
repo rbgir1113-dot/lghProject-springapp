@@ -1,10 +1,12 @@
 package com.app.springapp.service.edu;
 
+import com.app.springapp.domain.dto.response.EduStartResponseDTO;
 import com.app.springapp.domain.vo.EduStartVO;
 import com.app.springapp.exception.EduException;
 import com.app.springapp.repository.EduStartDAO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(noRollbackFor =  {EduException.class})
 public class EduStartServiceImpl implements EduStartService {
     private final EduStartDAO eduStartDAO;
+    private final RewardService rewardService;
 
     // 학습 시작 기록 저장
     @Override
@@ -27,5 +30,31 @@ public class EduStartServiceImpl implements EduStartService {
         eduStartVO.setEduId(eduId);
 
         eduStartDAO.save(eduStartVO);
+    }
+
+    // 학습 세션 완료 처리
+    @Override
+    public void completeEduStart(Long userId, Long eduId) {
+        if (!eduStartDAO.existsIncompleteEduStart(userId, eduId)) {
+            startEdu(userId, eduId);
+        }
+
+        eduStartDAO.updateCompleted(userId, eduId);
+    }
+
+    // 학습 세션 완료 여부 조회
+    @Override
+    public boolean isEduStartCompleted(Long userId, Long eduId) {
+        return eduStartDAO.existsCompletedEduStart(userId, eduId);
+    }
+
+    // 학습 로드맵 이벤트 보상 수령
+    @Override
+    public int claimRoadmapReward(Long userId, Long eduId) {
+        if (!eduStartDAO.existsCompletedEduStart(userId, eduId)) {
+            throw new EduException("학습 완료 후 보상을 받을 수 있습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        return rewardService.grantReward(userId, "LEARN", "ROADMAP_REWARD", eduId);
     }
 }
