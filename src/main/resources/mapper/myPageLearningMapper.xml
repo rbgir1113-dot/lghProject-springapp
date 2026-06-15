@@ -35,7 +35,7 @@
                         LEFT JOIN TBL_WORD_STUDY TWS
                                 ON TEWM.ID = TWS.EDU_WORD_MAP_ID
                                     AND TWS.USER_ID = TES.USER_ID
-                                    AND AND TWS.USER_ID = TES.USER_ID
+                                    AND TWS.USER_ID = TES.USER_ID
                                     AND TWS.WORD_STUDY_UPDATE_AT >= TES.EDU_START_AT
                 WHERE TES.USER_ID = #{userId}
                     AND TE.EDU_IS_DELETED = 0
