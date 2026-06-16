@@ -133,6 +133,7 @@
             TU.USER_EXP AS userExp,
             TU.USER_CREATE_AT AS userCreateAt,
             TU.USER_ROLE AS userRole,
+            TU.USER_EMAIL_CHANGED_AT AS userEmailChangedAt,
             CASE
                 WHEN TSU.ID IS NOT NULL
                     AND UPPER(TSU.SOCIAL_USER_PROVIDER) IN ('GOOGLE', 'KAKAO', 'NAVER')
@@ -164,14 +165,25 @@
     <!-- 기본 프로필 수정 -->
     <update id="updateUserBasicInfo" parameterType="map">
         UPDATE TBL_USER
-        SET USER_NICKNAME = #{requestDTO.userNickname}, USER_INTRO = #{requestDTO.userIntro}, USER_JOB = #{requestDTO.userJob}, USER_ADDRESS = #{requestDTO.userAddress}
+        SET USER_NAME = #{requestDTO.userName},
+            USER_NICKNAME = #{requestDTO.userNickname},
+            USER_INTRO = #{requestDTO.userIntro},
+            USER_JOB = #{requestDTO.userJob},
+            USER_ADDRESS = #{requestDTO.userAddress}
         WHERE ID = #{userId}
     </update>
 
     <!-- 계정 정보 수정 -->
     <update id="updateUserAccountInfo" parameterType="map">
         UPDATE TBL_USER
-        SET USER_PHONE_NUM = #{requestDTO.userPhoneNum}
+        SET USER_EMAIL = #{requestDTO.userEmail},
+            USER_PHONE_NUM = #{requestDTO.userPhoneNum},
+            USER_EMAIL_CHANGED_AT =
+                CASE
+                    WHEN USER_EMAIL != #{requestDTO.userEmail}
+                        THEN SYSDATE
+                    ELSE USER_EMAIL_CHANGED_AT
+                    END
         WHERE ID = #{userId}
     </update>
 
