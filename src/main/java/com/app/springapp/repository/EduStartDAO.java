@@ -24,8 +24,13 @@ public class EduStartDAO {
     }
 
     // 학습 세션 완료 처리
-    public void updateCompleted(Long userId, Long eduId) {
-        eduStartMapper.updateCompleted(userId, eduId);
+    public void updateCompleted(Long userId, Long eduId, int eduStartTime) {
+        eduStartMapper.updateCompleted(userId, eduId, eduStartTime);
+    }
+
+    // 학습 세션 문제 풀이 결과 반영
+    public void updateProgress(Long id, int isCorrect) {
+        eduStartMapper.updateProgress(id, isCorrect);
     }
 
     // 학습 세션 완료 여부 조회

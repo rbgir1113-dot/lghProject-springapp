@@ -6,12 +6,15 @@ public interface EduStartService {
     public void startEdu(Long userId, Long eduId);
 
     // 학습 세션 완료 처리
-    public void completeEduStart(Long userId, Long eduId);
+    public void completeEduStart(Long userId, Long eduId, int eduStartTime);
 
     // 학습 세션 완료 여부 조회
     public boolean isEduStartCompleted(Long userId, Long eduId);
 
     // 학습 로드맵 이벤트 보상 수령
     public int claimRoadmapReward(Long userId, Long eduId);
+
+    // 학습 세션 문제 풀이 결과 반영
+    public void recordProgress(Long userId, Long eduId, int isCorrect);
 
 }

@@ -14,7 +14,7 @@ public interface EduStartMapper {
     public void insert(EduStartVO eduStartVO);
 
     // 사용자의 특정 학습 최신 미완료 시작 기록 완료 처리
-    public void updateCompleted(Long userId, Long eduId);
+    public void updateCompleted(Long userId, Long eduId, int eduStartTime);
 
     // 학습 세션 완료 여부 조회
     public int countCompletedByUserIdAndEduId(Long userId, Long eduId);
@@ -22,4 +22,6 @@ public interface EduStartMapper {
     // 사용자의 특정 학습 미완료 시작 기록 개수 조회
     public int countIncompleteByUserIdAndEduId(Long userId, Long eduId);
 
+    // 학습 세션 문제 풀이 결과 반영
+    public void updateProgress(Long id, int isCorrect);
 }
