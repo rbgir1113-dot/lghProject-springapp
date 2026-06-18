@@ -19,4 +19,6 @@ public class InquireDTO {
     private String inquireStatus;
     private Long userId;
     private String inquireAnswer;
+    private String userName;
+
 }

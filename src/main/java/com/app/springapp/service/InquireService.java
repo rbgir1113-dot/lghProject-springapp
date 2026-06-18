@@ -16,4 +16,5 @@ public interface InquireService {
     public List<InquireDTO> findAllInquiresForAdmin();
     public void updateContent(InquireDTO inquireDTO);
     public void saveWithFile(InquireDTO inquireDTO, List<MultipartFile> files) throws IOException;
+    public void updateContentWithFile(InquireDTO inquireDTO, MultipartFile file) throws IOException;
 }

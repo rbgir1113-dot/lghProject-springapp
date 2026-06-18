@@ -87,14 +87,17 @@ public class InquireApi {
 
     //    답변 받기전 유저가 직접 문의 내용을 수정 할수 있게 함
     @Operation(summary = "문의 수정 (답변 전 유저가 문의를 수정할 수 있게 함)")
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> updateContent(@PathVariable Long id,
-                                           @RequestBody InquireUpdateRequestDTO requestDTO) {
+    @PatchMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateContent(
+            @PathVariable Long id,
+            @RequestPart("inquireContent") String inquireContent,
+            @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+
         InquireDTO inquireDTO = new InquireDTO();
         inquireDTO.setId(id);
-        inquireDTO.setInquireContent(requestDTO.getInquireContent());
+        inquireDTO.setInquireContent(inquireContent);
 
-        inquireService.updateContent(inquireDTO);
+        inquireService.updateContentWithFile(inquireDTO, file);
         return ResponseEntity.ok("문의가 수정되었습니다.");
     }
 

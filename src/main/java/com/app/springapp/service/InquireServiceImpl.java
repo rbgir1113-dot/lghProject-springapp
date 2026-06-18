@@ -94,4 +94,17 @@ public class InquireServiceImpl implements InquireService {
         inquireDAO.save(InquireVO.from(inquireDTO));
     }
 
+    @Override
+    public void updateContentWithFile(InquireDTO inquireDTO, MultipartFile file) throws IOException {
+        if (file != null && !file.isEmpty()) {
+            File dir = new File(uploadPath);
+            if (!dir.exists()) dir.mkdirs();
+
+            String savedName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            file.transferTo(new File(uploadPath + File.separator + savedName));
+            inquireDTO.setInquireFileUrl("/uploads/inquire/" + savedName);
+        }
+        inquireDAO.updateContent(inquireDTO);
+    }
+
 }
