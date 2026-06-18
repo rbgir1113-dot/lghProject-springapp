@@ -39,6 +39,10 @@ public class CommunityUserResponseDTO {
     private Boolean isFollow;
     @Schema(description = "사용자 자신 프로필인 여부", example = "true")
     private Boolean isMe;
+    @Schema(description = "유저 레벨", example = "1")
+    private Integer userLevel;
+    @Schema(description = "유저 레벨 이름", example = "입문자")
+    private String userLevelName;
 
     public static CommunityUserResponseDTO from (CommunityUserDTO communityUserDTO) {
         CommunityUserResponseDTO communityUserResponseDTO = new CommunityUserResponseDTO();
