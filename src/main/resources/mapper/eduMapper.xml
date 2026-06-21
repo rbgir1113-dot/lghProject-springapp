@@ -7,7 +7,19 @@
         SELECT ID, EDU_TITLE, EDU_DETAIL, EDU_DIA, EDU_IS_DELETED
         FROM TBL_EDU
         WHERE EDU_IS_DELETED = 0
-        ORDER BY ID ASC
+        ORDER BY
+            CASE
+                WHEN EDU_TITLE = '수어 입문' THEN 1
+                WHEN EDU_TITLE = '수어 초급' THEN 2
+                WHEN EDU_TITLE = '수어 중급' THEN 3
+                WHEN EDU_TITLE = '수어 고급' THEN 4
+                WHEN EDU_TITLE = '응급 수신호 입문' THEN 5
+                WHEN EDU_TITLE = '응급 수신호 초급' THEN 6
+                WHEN EDU_TITLE = '응급 수신호 중급' THEN 7
+                WHEN EDU_TITLE = '응급 수신호 고급' THEN 8
+                ELSE 99
+                END,
+            ID ASC
     </select>
 
     <!-- 학습 상세 조회 -->
