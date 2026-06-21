@@ -49,9 +49,10 @@ public class UserApi {
 
     // 이메일 찾기
     @GetMapping("/email")
-    @Operation(summary = "이메일 찾기", description = "이름으로 가입된 이메일 조회")
-    public ResponseEntity<ApiResponseDTO> findEmail(@RequestParam String userName) {
-        return ResponseEntity.ok(userService.findEmail(userName));
+    @Operation(summary = "이메일 찾기", description = "이름 + 전화번호로 가입된 이메일 조회")
+    public ResponseEntity<ApiResponseDTO> findEmail(@RequestParam String userName,
+                                                    @RequestParam String userPhoneNum) {
+        return ResponseEntity.ok(userService.findEmail(userName, userPhoneNum));
     }
 
     // 비밀번호 재설정

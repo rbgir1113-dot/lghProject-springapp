@@ -80,8 +80,8 @@ public class UserServiceImpl implements UserService {
 
     // 이메일 찾기
     @Override
-    public ApiResponseDTO findEmail(String userName) {
-        String email = userDAO.findEmailByUserName(userName)
+    public ApiResponseDTO findEmail(String userName, String userPhoneNum) {
+        String email = userDAO.findEmailByUserNameAndPhone(userName, userPhoneNum)
                 .orElseThrow(() -> new UserException("일치하는 계정을 찾을 수 없습니다.", HttpStatus.NOT_FOUND));
         return ApiResponseDTO.of(true, "이메일 조회 성공", Map.of("userEmail", email));
     }

@@ -20,7 +20,7 @@ public interface UserService {
     public ApiResponseDTO checkEmailExists(String email);
 
     // 이메일 찾기
-    public ApiResponseDTO findEmail(String userName);
+    public ApiResponseDTO findEmail(String userName, String userPhoneNum);
 
     // 비밀번호 재설정
     public ApiResponseDTO resetPassword(String userEmail, String newPassword);

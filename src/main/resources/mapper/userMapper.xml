@@ -64,8 +64,9 @@
     </delete>
 
     <!-- 이메일 찾기 (이름으로 조회) -->
-    <select id="selectEmailByUserName" parameterType="String" resultType="String">
-        SELECT USER_EMAIL FROM TBL_USER WHERE USER_NAME = #{userName}
+    <select id="selectEmailByUserNameAndPhone" resultType="String">
+        SELECT USER_EMAIL FROM TBL_USER
+        WHERE USER_NAME = #{userName} AND USER_PHONE_NUM = #{userPhoneNum}
     </select>
 
     <!-- 이메일 존재 여부 조회 -->

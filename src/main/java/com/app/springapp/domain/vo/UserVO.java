@@ -30,6 +30,7 @@ public class UserVO {
         userVO.setUserName(userDTO.getUserName());
         userVO.setUserNickname(userDTO.getUserNickname() != null ? userDTO.getUserNickname() : "개복치 1단계");
         userVO.setUserBirth(userDTO.getUserBirth());
+        userVO.setUserPhoneNum(userDTO.getUserPhoneNum());
         return userVO;
     }
 }

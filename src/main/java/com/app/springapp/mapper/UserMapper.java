@@ -23,8 +23,8 @@ public interface UserMapper {
     public void updatePicture(UserVO userVO);
     // 유저 삭제
     public void delete(Long id);
-    // 이메일 찾기
-    public String selectEmailByUserName(String userName);
+    // 이메일 찾기 (이름 + 전화번호)
+    public String selectEmailByUserNameAndPhone(@Param("userName") String userName, @Param("userPhoneNum") String userPhoneNum);
     // 이메일 존재 여부 조회
     public boolean existsUserByEmail(@Param("userEmail") String userEmail);
     // 비밀번호 재설정

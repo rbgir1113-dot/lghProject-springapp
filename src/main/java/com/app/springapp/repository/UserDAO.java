@@ -49,9 +49,9 @@ public class UserDAO {
         userMapper.delete(id);
     }
 
-    // 이메일 찾기
-    public Optional<String> findEmailByUserName(String userName) {
-        return Optional.ofNullable(userMapper.selectEmailByUserName(userName));
+    // 이메일 찾기 (이름 + 전화번호)
+    public Optional<String> findEmailByUserNameAndPhone(String userName, String userPhoneNum) {
+        return Optional.ofNullable(userMapper.selectEmailByUserNameAndPhone(userName, userPhoneNum));
     }
 
     // 이메일 존재 여부 조회
